@@ -1,0 +1,19 @@
+# Compiled object files
+*.o
+*.out
+*.exe
+
+# Build directories
+build/
+bin/
+
+# IDE files
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.cmake
+
+# Miscellaneous
+*.log
+*.tmp
