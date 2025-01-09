@@ -17,3 +17,4 @@ bin/
 # Miscellaneous
 *.log
 *.tmp
+trash/
