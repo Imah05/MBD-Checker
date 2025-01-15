@@ -12,6 +12,7 @@
 #include <numeric>
 #include "GameState.h"   
 #include <stdexcept>
+#include <utility>
 
 using namespace std;
 
@@ -25,7 +26,9 @@ bool havel_hakimi(deque<int> degreeSequence);
 
 
 
-char filter_R(int sur, int numVtxInR, char flag);
+pair<int, int> filter_R(int sur, int numVtxInR, char flag);
+
+int filter_SI(int sur, int numVtxInS, int numVtxInI, char flag, int remainingSur); 
 
 
 #endif // RSI_H

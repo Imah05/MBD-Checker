@@ -54,14 +54,13 @@ using namespace std;
 
 
 int main() {
-    cout << filter_R(8, 2, 'S') << endl;
-    cout << filter_R(8, 3, 'S') << endl;
-    cout << filter_R(8, 4, 'S') << endl;
-    cout << filter_R(8, 5, 'S') << endl;
-    cout << filter_R(8, 6, 'S') << endl;
-    cout << filter_R(8, 7, 'S') << endl;
-    cout << filter_R(8, 8, 'S') << endl;
-    cout << filter_R(8, 9, 'S') << endl;
-    cout << filter_R(8, 10, 'S') << endl;
+    cout << filter_R(8, 2, 'S').first << ", " << filter_R(8, 2, 'S').second << endl;
+    cout << filter_R(8, 3, 'S').first << ", " << filter_R(8, 3, 'S').second << endl;
+    cout << filter_R(8, 4, 'S').first << ", " << filter_R(8, 4, 'S').second << endl;
+    cout << filter_R(8, 5, 'S').first << ", " << filter_R(8, 5, 'S').second << endl;
+    cout << filter_R(8, 6, 'S').first << ", " << filter_R(8, 6, 'S').second << endl;
+    cout << filter_R(8, 7, 'S').first << ", " << filter_R(8, 7, 'S').second << endl;
+    cout << filter_R(8, 8, 'S').first << ", " << filter_R(8, 8, 'S').second << endl;
+    cout << filter_R(8, 9, 'S').first << ", " << filter_R(8, 9, 'S').second << endl;
     return 0;
 }

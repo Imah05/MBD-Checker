@@ -39,109 +39,227 @@ bool havel_hakimi(deque<int> degreeSequence)  {
 
 // assumes that a file "R"+ (char)numVtxInR + "sur" + (char)sur
 // exists in the graphs directory
-char filter_R(int sur, int numVtxInR, char flag) {
-    string inFilePath = "graphs/sur8/R" + to_string(numVtxInR) + "sur" + to_string(sur) + ".txt";
-    string outFilePathD = inFilePath.substr(0, inFilePath.size() - 4) + "flag" + to_string(flag) + "outcomeD" + ".txt";
-    string outFilePathN = inFilePath.substr(0, inFilePath.size() - 4) + "flag" + to_string(flag) + "outcomeN" + ".txt";
-    string outFilePathS = inFilePath.substr(0, inFilePath.size() - 4) + "flag" + to_string(flag) + "outcomeS" + ".txt";
-
-    char outFlag = 'D';
+pair<int, int> filter_R(int sur, int numVtxInR, char flag) {
+    string inFilePath = "graphs/sur" + to_string(sur) + "/unfiltered_R/R" + to_string(numVtxInR) + "sur" + to_string(sur) + ".txt";
+    string path = "graphs/sur" + to_string(sur) + "/filtered_R/R" + to_string(numVtxInR) + "sur" + to_string(sur);
+    
     ifstream file(inFilePath);
     if (!file.is_open()) {
         throw runtime_error("Failed to open the file: " + inFilePath);
     }
-    ofstream outFileD(outFilePathD);
-    if (!outFileD.is_open()) {
-        throw runtime_error("Failed to open the output file: " + outFilePathD);
-    }
-    ofstream outFileN(outFilePathN);
-    if (!outFileN.is_open()) {
-        throw runtime_error("Failed to open the output file: " + outFilePathN);
-    }
-    ofstream outFileS(outFilePathS);
-    if (!outFileS.is_open()) {
-        throw runtime_error("Failed to open the output file: " + outFilePathS);
-    }
+  
     
     string line;
     int lineNumber = 0;
+    int maxComplMaxDeg = 0;
+    int remainingSur = -1;
+    int lowDegSur, highDegSur, curDeg, maxDeg, curSur, complMaxDeg; 
 
-    int lowDegSur, highDegSur, curDeg, maxDeg; 
-    while (getline(file, line)) {
-        ++lineNumber;
-        try {
-            Graph graph = Graph(line);
-            lowDegSur = 0;
-            highDegSur = 0;
-            maxDeg = 0;
-            for (int i = 0; i < numVtxInR; i++) {
-                curDeg = graph.neighborhood(i).size();
-                if (curDeg > maxDeg) {
-                    maxDeg = curDeg;
+    if (flag == 'S') {
+        string outFilePathD = path + "flag" + flag + "outcomeD" + ".txt";
+        ofstream outFileD(outFilePathD);
+        if (!outFileD.is_open()) {
+            throw runtime_error("Failed to open the output file: " + outFilePathD);
+        }
+        string outFilePathN = path + "flag" + flag + "outcomeN" + ".txt";
+        ofstream outFileN(outFilePathN);
+        if (!outFileN.is_open()) {
+            throw runtime_error("Failed to open the output file: " + outFilePathN);
+        }
+        string outFilePathS = path + "flag" + flag + "outcomeS" + ".txt";
+        ofstream outFileS(outFilePathS);
+        if (!outFileS.is_open()) {
+            throw runtime_error("Failed to open the output file: " + outFilePathS);
+        }
+        while (getline(file, line)) {
+            ++lineNumber;
+            try {
+                Graph graph = Graph(line);
+                lowDegSur = 0;
+                highDegSur = 0;
+                maxDeg = 0;
+                for (int i = 0; i < numVtxInR; i++) {
+                    curDeg = graph.neighborhood(i).size();
+                    if (curDeg > maxDeg) {
+                        maxDeg = curDeg;
+                    }
+                    if (curDeg > 3) {
+                        highDegSur += (curDeg - 3);
+                    }
+                    else if (curDeg < 3) {
+                        lowDegSur += (3 - curDeg);
+                    }
                 }
-                if (curDeg > 3) {
-                    highDegSur += (curDeg - 3);
+                if (maxDeg <= 3) {
+                    curSur = highDegSur + lowDegSur + 1;
                 }
-                else if (curDeg < 3) {
-                    lowDegSur += (3 - curDeg);
+                else {
+                    curSur = highDegSur + lowDegSur - (maxDeg - 3);
                 }
-            }
-            if (maxDeg > 3) {
-                highDegSur -= (maxDeg - 3);
-            }
-            // maybe stronger first filter?
-            if ((highDegSur + lowDegSur) <= (sur - 3)) {
-                GameState gs = GameState(&graph);
-                if (flag == 'S') { 
+                if (curSur <= (sur - 3)) {
+                    if ((sur - 3) - curSur > remainingSur) {
+                        remainingSur = (sur - 3) - curSur;
+                    }
+                    if (maxDeg <= 4) {
+                        complMaxDeg = 4 + (sur - 3) - curSur;
+                    }
+                    else {
+                        complMaxDeg = maxDeg + (sur - 3) - curSur;
+                    }
+                    if (complMaxDeg > maxComplMaxDeg) {
+                        maxComplMaxDeg = complMaxDeg;
+                    }
+                    GameState gs = GameState(&graph);
                     if (gs.outcome('S') == 'D') {
                         outFileD << line << endl;
                     }
                     else if (gs.outcome('D') == 'D') {
                         outFileN << line << endl;
-                        if (outFlag != 'S') {
-                            outFlag = 'N';
-                        }
                     }
                     else {
                         outFileS << line << endl;
-                        outFlag = 'S';
                     }
                 }
-                if (flag == 'N') { 
+            } catch (const exception& e) {
+                cerr << "Error processing line " << lineNumber << ": " << e.what() << endl;
+            }
+        }
+    outFileD.close();
+    outFileN.close();
+    outFileS.close();
+    }
+    else if (flag == 'N') {
+        string outFilePathN = path + "flag" + flag + "outcomeN" + ".txt";
+        ofstream outFileN(outFilePathN);
+        if (!outFileN.is_open()) {
+            throw runtime_error("Failed to open the output file: " + outFilePathN);
+        }
+        string outFilePathS = path + "flag" + flag + "outcomeS" + ".txt";
+        ofstream outFileS(outFilePathS);
+        if (!outFileS.is_open()) {
+            throw runtime_error("Failed to open the output file: " + outFilePathS);
+        }
+        while (getline(file, line)) {
+            ++lineNumber;
+            try {
+                Graph graph = Graph(line);
+                lowDegSur = 0;
+                highDegSur = 0;
+                maxDeg = 0;
+                for (int i = 0; i < numVtxInR; i++) {
+                    curDeg = graph.neighborhood(i).size();
+                    if (curDeg > maxDeg) {
+                        maxDeg = curDeg;
+                    }
+                    if (curDeg > 3) {
+                        highDegSur += (curDeg - 3);
+                    }
+                    else if (curDeg < 3) {
+                        lowDegSur += (3 - curDeg);
+                    }
+                }
+                curSur = highDegSur + lowDegSur - (maxDeg - 3);
+                if (maxDeg <= 3) {
+                    ++curSur;
+                }
+                if (curSur <= (sur - 3)) {
+                    if (maxDeg <= 4) {
+                        complMaxDeg = 4 + (sur - 3) - curSur;
+                    }
+                    else {
+                        complMaxDeg = maxDeg + (sur - 3) - curSur;
+                    }
+                    GameState gs = GameState(&graph);
                     if (gs.outcome('S') == 'D') {
                         // filter
                     }
                     else if (gs.outcome('D') == 'D') {
+                        if ((sur - 3) - curSur > remainingSur) {
+                            remainingSur = (sur - 3) - curSur;
+                        }
+                        if (complMaxDeg > maxComplMaxDeg) {
+                            maxComplMaxDeg = complMaxDeg;
+                        }
                         outFileN << line << endl;
-                        if (outFlag != 'S') {
-                            outFlag = 'N';
-                        }
                     }
                     else {
-                        outFileS << line << endl;
-                        outFlag = 'S';
-                    }
-                }
-                if (flag == 'D') { 
-                    if (gs.outcome('D') == 'D') {
-                        // filter
-                        if (outFlag != 'S') {
-                            outFlag = 'N';
+                        if ((sur - 3) - curSur > remainingSur) {
+                            remainingSur = (sur - 3) - curSur;
                         }
-                    }
-                    else {
+                        if (complMaxDeg > maxComplMaxDeg) {
+                            maxComplMaxDeg = complMaxDeg;
+                        }
                         outFileS << line << endl;
-                        outFlag = 'S';
                     }
                 }
+            } catch (const exception& e) {
+                cerr << "Error processing line " << lineNumber << ": " << e.what() << endl;
             }
-        } catch (const exception& e) {
-            cerr << "Error processing line " << lineNumber << ": " << e.what() << endl;
         }
-    }
-    file.close();
-    outFileD.close();
     outFileN.close();
     outFileS.close();
-    return outFlag;
+    }
+    else if (flag == 'D') {
+        string outFilePathS = path + "flag" + flag + "outcomeS" + ".txt";
+        ofstream outFileS(outFilePathS);
+        if (!outFileS.is_open()) {
+            throw runtime_error("Failed to open the output file: " + outFilePathS);
+        }
+        while (getline(file, line)) {
+            ++lineNumber;
+            try {
+                Graph graph = Graph(line);
+                lowDegSur = 0;
+                highDegSur = 0;
+                maxDeg = 0;
+                for (int i = 0; i < numVtxInR; i++) {
+                    curDeg = graph.neighborhood(i).size();
+                    if (curDeg > maxDeg) {
+                        maxDeg = curDeg;
+                    }
+                    if (curDeg > 3) {
+                        highDegSur += (curDeg - 3);
+                    }
+                    else if (curDeg < 3) {
+                        lowDegSur += (3 - curDeg);
+                    }
+                }
+                curSur = highDegSur + lowDegSur - (maxDeg - 3);
+                if (maxDeg <= 3) {
+                    ++curSur;
+                }
+                if (curSur <= (sur - 3)) {
+                    if (maxDeg <= 4) {
+                        complMaxDeg = 4 + (sur - 3) - curSur;
+                    }
+                    else {
+                        complMaxDeg = maxDeg + (sur - 3) - curSur;
+                    }
+                    GameState gs = GameState(&graph);
+                    if (gs.outcome('D') == 'D') {
+                        // filter
+                    }
+                    else {
+                        if ((sur - 3) - curSur > remainingSur) {
+                            remainingSur = (sur - 3) - curSur;
+                        }
+                        if (complMaxDeg > maxComplMaxDeg) {
+                            maxComplMaxDeg = complMaxDeg;
+                        }
+                        outFileS << line << endl;
+                    }
+                }
+            } catch (const exception& e) {
+                cerr << "Error processing line " << lineNumber << ": " << e.what() << endl;
+            }
+        }
+    outFileS.close();
+    }
+    file.close();
+    return {maxComplMaxDeg, remainingSur};
+}
+
+int filter_SI(int sur, int numVtxInS, int numVtxInI, char flag, int remainingSur)
+{
+    return 0;
 }
