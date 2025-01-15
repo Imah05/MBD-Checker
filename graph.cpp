@@ -83,9 +83,11 @@ string Graph::toGraph6() const {
 // Here n is the number of vertices of the graph.
 void Graph::printGraph() const {
     for (int i = 0; i < graph.size(); i++) {
+        cout << "Vertex " << i << " has the following neighbours: { ";
         for (auto elem : graph[i]) {
             cout << elem << " ";
         }
-        cout << endl;
+        cout << " }." <<  endl;
     }
 }
+

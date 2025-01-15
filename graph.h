@@ -7,7 +7,7 @@
 #include <string>
 #include <list>
 #include <set>
-#include <vector>
+// #include "GameState.h"
 
 
 using namespace std;
@@ -26,8 +26,10 @@ public:
     // char outcome() const;
 
 private:
+
     vector<set<int>> graph; // graph[i] contains all the vertices
                             // adjacent to vertex i.
+
 };
 
 #endif // GRAPH_H

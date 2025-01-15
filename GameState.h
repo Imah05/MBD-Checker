@@ -8,7 +8,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cmath>
-# include "graph.h"
+
+class Graph;
 
 using namespace std;
 
