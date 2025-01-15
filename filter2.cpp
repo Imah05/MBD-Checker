@@ -1,4 +1,4 @@
-#include "filter.h"
+#include "filter2.h"
 
 
 
@@ -23,11 +23,79 @@ bool matchingfilter(const int B, const int W,const int right3,const int surplus,
 }
 
 
+bool filter1(const string& g6) {
+	Graph gpaul = Graph(g6);
+	//gpaul.printGraph();
+    	int V=21;
+	int* degreelist = new int[V];
+	int maxdegree=0;
+	int maxindex=0;
+	for (int i=0; i<V;i++) {
+		degreelist[i]=gpaul.neighborhood(i).size();
+		if (degreelist[i]>maxdegree) {
+			maxdegree=degreelist[i];
+			maxindex=i;
+		}
+	}
+	int scan=0;
+	int W=0; //number of big vertices
+	while (degreelist[scan]>3) {
+		W++;
+		scan++;
+	}
+	int B=V-W; //number of small vertices
+    	bool isbad=true;
+    	int goal=pow(2,maxdegree+1);
+    	bool below1=true;
+    	
+    	// Staller could pick a degree 3 vertex, compute an upper bound for this case
+    	int ub=0;
+    	for (int i=0;i<W;i++) {
+    		if (i!=maxindex) {
+   			ub+=pow(2,maxdegree-degreelist[i]);
+   		}
+    	}
+    	ub+=(B-4-maxdegree)*pow(2,maxdegree-3);
+    	ub+=4*pow(2,maxdegree-3);
+    	if (ub>=goal) {
+   		below1=false;
+   		//gpaul.printGraph();
+   	}
+    	
+    	for (int i=0;i<W;i++) {  //Going over all of Stallers moves, picking a large vertex
+    	    	int cost=0;
+    		if (i!=maxindex) {
+    			int countdouble=0;
+    			for (int j=0;j<B;j++) {
+    				if ((gpaul.hasEdge(maxindex, W+j))&&(gpaul.hasEdge(i, W+j))) {
+    					countdouble++;
+    				}
+   			}
+   			int deg2=degreelist[i]-countdouble;
+   			for (int j=0;j<W;j++) {
+   				if (j==i) {
+   					cost+=pow(2,maxdegree-degreelist[j]+1);
+   				}
+   				else if (j!=maxindex) {
+   					cost+=pow(2,maxdegree-degreelist[j]);
+   				}
+   			}
+   			cost+=(B-maxdegree-deg2)*pow(2,maxdegree-3);
+   			cost+=deg2*pow(2,maxdegree-2);
+   			if (cost>=goal) {
+   				below1=false;
+   			}
+    		}
+    	}
+
+  	return !below1;
+}
+
+
 
 bool filter2(const string& g6) {
 	Graph gpaul = Graph(g6);
 	//gpaul.printGraph();
-    	//Begin stuff of Jakob
     	int V=21;
 	int* degreelist = new int[V];
 	for (int i=0; i<V;i++) {

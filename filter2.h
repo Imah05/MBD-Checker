@@ -14,6 +14,9 @@ bool matchingfilter(const int B, const int W,const int right3,const int surplus,
 //Applies filter number 2 to one g6-file containing a core
 bool filter2(const string& g6);
 
+//Applies filter number 1 to one g6-file containing a core, this should later be replaced by Paul's filter
+bool filter1(const string& g6);
+
 // A class to represent Bipartite graph for Hopcroft
 // Karp implementation
 class BipGraph
