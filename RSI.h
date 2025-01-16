@@ -28,7 +28,7 @@ bool havel_hakimi(deque<int> degreeSequence);
 
 pair<int, int> filter_R(int sur, int numVtxInR, char flag);
 
-int filter_SI(int sur, int numVtxInS, int numVtxInI, char flag, int remainingSur); 
+// int filter_SI(int sur, int numVtxInS, int numVtxInI, char flag, int remainingSur); 
 
 
 #endif // RSI_H
