@@ -23,7 +23,7 @@ bool matchingfilter(const int B, const int W,const int right3,const int surplus,
 }
 
 
-bool filter1(const string& g6) {
+bool filter1old(const string& g6) {
 	Graph gpaul = Graph(g6);
 	//gpaul.printGraph();
     	int V=21;
@@ -90,6 +90,15 @@ bool filter1(const string& g6) {
 
   	return !below1;
 }
+
+bool filter1(const string& g6) {
+    Graph g = Graph(g6);
+    Core core = Core(&g);
+    bool isbad=!core.filter('D');
+	return isbad;
+}
+
+
 
 
 
