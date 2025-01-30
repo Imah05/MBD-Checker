@@ -5,7 +5,7 @@
 #include "graph.h"
 #include "Core.h"
 using namespace std;
-#define NIL -1
+#define NIL 0
 #define INF INT_MAX
 
 
