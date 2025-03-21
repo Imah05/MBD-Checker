@@ -1,11 +1,5 @@
 #include "filter2.h"
 
-
-
-
-
-
-
 bool matchingfilter(const int B, const int W,const int right3,const int surplus,const int* degreelist,const int* wantdegree,const Graph& gpaul) {
 	bool isbad=true;
 	BipGraph g(B-right3+surplus, B);
@@ -94,12 +88,9 @@ bool filter1old(const string& g6) {
 bool filter1(const string& g6) {
     Graph g = Graph(g6);
     Core core = Core(&g);
-    bool isbad=!core.filter('D');
+    bool isbad=!core.filter();
 	return isbad;
 }
-
-
-
 
 
 bool filter2(const string& g6) {

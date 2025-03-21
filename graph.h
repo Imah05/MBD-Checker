@@ -19,6 +19,7 @@ class Graph {
 public:
     Graph(const string& graph6);
     bool hasEdge(int u, int v) const;
+    Graph& addEdge(int a, int b) const;
     int getNumVertices() const;
     const set<int>& neighborhood(int vtx) const;
     string toGraph6() const;

@@ -37,6 +37,13 @@ bool Graph::hasEdge(int u, int v) const {
     return graph[u].count(v) > 0;
 }
 
+Graph& Graph::addEdge(int a, int b) const {
+    Graph* newGraph = new Graph(*this);
+    newGraph->graph[a].insert(b);
+    newGraph->graph[b].insert(a);
+    return *newGraph;
+}
+
 int Graph::getNumVertices() const {
     return graph.size();
 }

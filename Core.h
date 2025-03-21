@@ -16,8 +16,19 @@ using namespace std;
 class Core {
 public:
     Core(Graph *core);
-    bool filter(char firstPlayer);
-    bool filterAfterLowDegMove(int vertex);
+    bool validCore();
+    bool isSWin();
+
+    // returns -1 if Dominator wins on every completion of this half completed core
+    // returns the low deg vtx v if we do not a priori know that Dominator 
+    // wins and where v is 'dangerous' vertex we want to use first when 
+    // completing this halfcompleted core
+    // returns -2 if we do not a priori know that Dominator 
+    // wins, but we don't have a hint vertex for the completion
+    int out_lw_bnd(char firstPlayer); 
+    char out_lw_bnd_after_lowDegMove(int vertex); 
+    bool filter();
+    bool completion_filter();
     void update();
             
 private:
@@ -27,8 +38,8 @@ private:
     vector<int> gameStateDegSeq;
     vector<int> lowDegVtx;
     double totalPot;  // upper bound on total ES potential in any completion of core. 
-    vector<int> remainingVtx;   // Vertices not claimed by Dominator nor Staller ordered by the corresponding
-                                // value stored in potSeq.
+    vector<int> remainingVtx;   // Vertices not claimed by Dominator nor Staller of deg
+                                // at least 3.
 };
 
 #endif // CORE_H

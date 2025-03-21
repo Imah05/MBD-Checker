@@ -259,6 +259,23 @@ pair<int, int> filter_R(int sur, int numVtxInR, char flag) {
     return {maxComplMaxDeg, remainingSur};
 }
 
+bool filter_SIsur6(string g6, char firstPlayer) {
+    Graph graph = Graph(g6);
+    int lowDegSur = 0;
+    for (int i = 0; i < graph.getNumVertices(); i++) {
+        if (graph.neighborhood(i).size() < 3) {
+            lowDegSur += 1;
+        }
+    }
+    if (lowDegSur > 3)
+        return true;
+    GameState gs = GameState(&graph);
+    if(gs.outcome(firstPlayer) == 'D') 
+        return true;
+        
+    return false;
+}
+
 // int filter_SI(int sur, int numVtxInS, int numVtxInI, char flag, int remainingSur) {
 //     string inFilePath = "graphs/sur" + to_string(sur) + "/unfiltered_SI/S" + to_string(numVtxInS) 
 //     + "I" + to_string(numVtxInI) + ".txt";
