@@ -21,7 +21,7 @@ public:
 
     // returns -1 if Dominator wins on every completion of this half completed core
     // returns the low deg vtx v if we do not a priori know that Dominator 
-    // wins and where v is 'dangerous' vertex we want to use first when 
+    // wins and where v is a 'dangerous' vertex we want to use first when 
     // completing this halfcompleted core
     // returns -2 if we do not a priori know that Dominator 
     // wins, but we don't have a hint vertex for the completion

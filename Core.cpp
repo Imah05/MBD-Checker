@@ -25,12 +25,12 @@ int Core::out_lw_bnd(char firstPlayer) {
     if (isSWin()) {
         return -2;
     }
-    int out = -1;
+    int out = -2;
 
     if (firstPlayer == 'D') {
-        int new_out = -1;
         if (totalPot < 1)
             return -1;
+        int new_out = -1;
         Core nextCoreGS = *this;
         for (const auto& i : remainingVtx) {
             nextCoreGS.DVtx[i] = true;
@@ -38,7 +38,7 @@ int Core::out_lw_bnd(char firstPlayer) {
             new_out = nextCoreGS.out_lw_bnd('S');
             if (new_out == -1)
                 return -1;
-            else if (out == -1) 
+            else if (out == -2) 
                 out = new_out;
             nextCoreGS.DVtx[i] = false;
         }
@@ -67,7 +67,7 @@ int Core::out_lw_bnd(char firstPlayer) {
         return -1;
     }
     cout << "firstPlayer has to be one of 'D' or 'S'!" << endl;
-    return 'S';
+    return -2;
 }
 
 char Core::out_lw_bnd_after_lowDegMove(int vertex) {
@@ -106,14 +106,17 @@ bool Core::completion_filter() {
     for (auto& i : lowDegVtx) {
         number_of_edges_to_add += 3 - core->neighborhood(i).size();
     }
-    number_of_edges_to_add/=2;
+    number_of_edges_to_add /= 2;
 
     int a = out_lw_bnd('D');
 
     if (a == -1)
         return true;
-    else if (a == -2) 
+    else if (lowDegVtx.size() == 0)
+        return false;
+    else if (a == -2)
         a = lowDegVtx[0];
+
     int b;
     for (int i = 0; i < lowDegVtx.size(); ++i) {
         b = lowDegVtx[i];
