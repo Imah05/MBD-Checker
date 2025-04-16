@@ -42,7 +42,7 @@ int main() {
             try {
                 Graph g = Graph(graphStr);
                 Core core = Core(&g);
-                if (!core.filter('D')) {
+                if (!core.filter()) {
                     outputFile << graphStr << endl;
                 }
             } catch (const exception& e) {
