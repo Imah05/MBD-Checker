@@ -85,6 +85,29 @@ string Graph::toGraph6() const {
     return out;
 }
 
+std::string Graph::toCanonicalGraph6() const {
+    return toGraph6();
+    // // Write toGraph6() to a temp file
+    // std::ofstream outFile("tempgraph.g6");
+    // outFile << toGraph6();
+    // outFile.close();
+
+    // // Command to run in a subshell
+    // const char* cmd =
+    //     "C:\\cygwin64\\bin\\bash -c \"cd /cygdrive/c/Users/root/Desktop/Coding/nauty/nauty2_8_9 && ./labelg -o /cygdrive/c/Users/root/Desktop/git/MBD-Checker/tempgraph.g6\"";
+
+    // // Run the command and capture stderr (optional, for debugging)
+    // int result = system(cmd);
+
+    // // Read the output file
+    // std::ifstream inFile("tempgraph.g6");
+    // std::stringstream buffer;
+    // buffer << inFile.rdbuf();
+
+    // return buffer.str();  // or tempoutput.g6 if labelg writes to a new file
+}
+
+
 // Prints n lines of integers, such that in the ith line
 // all the vertices adjacent to vertex i-1 are listed.
 // Here n is the number of vertices of the graph.

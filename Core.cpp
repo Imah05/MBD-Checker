@@ -121,12 +121,50 @@ bool Core::completion_filter() {
     for (int i = 0; i < lowDegVtx.size(); ++i) {
         b = lowDegVtx[i];
         if (!core->neighborhood(a).count(b) && b != a) {
-            if (number_of_edges_to_add > 12) {
+            if (number_of_edges_to_add > 8) {
                 cout << number_of_edges_to_add << " edges remaining, joining edge " << a << ", " << b << endl;
             }
             if(!Core(&core->addEdge(a, b)).completion_filter())
             return false;
         }
+    }
+    return true;
+}
+
+set<string> nextCompl(set<string> g6set) {
+    set<string> out;
+    string g6;
+
+    for (string g6 : g6set) {
+        Graph g = Graph(g6);
+        Core core = Core(&g);
+        int a = core.out_lw_bnd('D');
+
+        if (a == -1)
+            continue;
+        else if (core.lowDegVtx.size() == 0) {
+            cout << "Counterexample found!" << g6 << endl;
+            return {"Counterexample:" + g6};
+        }
+        else if (a == -2)
+            a = core.lowDegVtx[0];
+    
+        int b;
+        for (int i = 0; i < core.lowDegVtx.size(); ++i) {
+            b = core.lowDegVtx[i];
+            if (!core.core->neighborhood(a).count(b) && b != a)
+                out.insert((&core.core->addEdge(a, b))->toCanonicalGraph6());
+        }
+    }
+    return out;
+}
+
+bool Core::completion_filter2() {
+    set<string> g6set = {core->toCanonicalGraph6()};
+    while(!g6set.empty()) {
+        if ((*g6set.begin()).rfind("Counterexample:", 0) == 0)
+            return false;
+        g6set = nextCompl(g6set);
     }
     return true;
 }

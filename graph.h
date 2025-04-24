@@ -8,6 +8,9 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <fstream>  
+#include <sstream>  
+#include <cstdlib>
 
 
 using namespace std;
@@ -23,6 +26,8 @@ public:
     int getNumVertices() const;
     const set<int>& neighborhood(int vtx) const;
     string toGraph6() const;
+    // TODO:
+    string toCanonicalGraph6() const;
     void printGraph() const;
     // char outcome() const;
 

@@ -2,6 +2,7 @@
 #define CORE_H
 
 #include <set>
+#include <string>
 #include <vector>
 #include <list>
 #include <utility>
@@ -29,7 +30,10 @@ public:
     char out_lw_bnd_after_lowDegMove(int vertex); 
     bool filter();
     bool completion_filter();
+    bool completion_filter2();
     void update();
+
+    friend set<string> nextCompl(set<string> g6set);
             
 private:
     Graph *core;        // pointer avoids expensive copying
