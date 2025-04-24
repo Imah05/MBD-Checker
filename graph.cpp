@@ -86,25 +86,12 @@ string Graph::toGraph6() const {
 }
 
 std::string Graph::toCanonicalGraph6() const {
-    return toGraph6();
-    // // Write toGraph6() to a temp file
-    // std::ofstream outFile("tempgraph.g6");
-    // outFile << toGraph6();
-    // outFile.close();
-
-    // // Command to run in a subshell
-    // const char* cmd =
-    //     "C:\\cygwin64\\bin\\bash -c \"cd /cygdrive/c/Users/root/Desktop/Coding/nauty/nauty2_8_9 && ./labelg -o /cygdrive/c/Users/root/Desktop/git/MBD-Checker/tempgraph.g6\"";
-
-    // // Run the command and capture stderr (optional, for debugging)
-    // int result = system(cmd);
-
-    // // Read the output file
-    // std::ifstream inFile("tempgraph.g6");
-    // std::stringstream buffer;
-    // buffer << inFile.rdbuf();
-
-    // return buffer.str();  // or tempoutput.g6 if labelg writes to a new file
+    FILE*  fp;
+    char buff[100];
+    string cmd =  "echo "+toGraph6()+" | labelg -q";
+    if ((fp = popen(cmd.c_str(), "r"))== NULL){}
+    fgets(buff, sizeof(buff), fp);
+    return buff;
 }
 
 

@@ -6,55 +6,28 @@
 #include <cmath>
 #include <limits>
 #include "Core.h"
-#include <filesystem>
 
-namespace fs = std::filesystem;
 using namespace std;
 
-int main() {
-    const string inputDir = "graphs/18-vertices-deg3/unfiltered/";
-    const string outputDir = "graphs/18-vertices-deg3/filtered/";
-    if (!fs::exists(outputDir)) {
-        fs::create_directories(outputDir);
+int main(int argc, const char *argv[])
+{
+    string graph6_in;
+    int count=0;
+    clock_t c_start = clock();
+    while (getline(cin, graph6_in))
+    {
+        Graph graph(graph6_in);
+        Core core(&graph);
+        if (! core.completion_filter2())
+        {
+            cout << graph6_in;
+            cout << '\n';
+            count++;
+        }
     }
-    for (const auto& entry : fs::directory_iterator(inputDir)) {
-        if (!entry.is_regular_file()) {
-            continue;
-        }
-        string inputFilePath = entry.path().string();
-        string fileName = entry.path().filename().string();
-        string outputFilePath = outputDir + fileName;
-
-        cout << "Processing: " << inputFilePath << " -> " << outputFilePath << endl;
-        ifstream inputFile(inputFilePath);
-        if (!inputFile.is_open()) {
-            cerr << "Error: Could not open input file " << inputFilePath << endl;
-            continue;
-        }
-
-        ofstream outputFile(outputFilePath);
-        if (!outputFile.is_open()) {
-            cerr << "Error: Could not open output file " << outputFilePath << endl;
-            continue;
-        }
-        string graphStr;
-        while (getline(inputFile, graphStr)) {
-            try {
-                Graph g = Graph(graphStr);
-                Core core = Core(&g);
-                if (!core.filter()) {
-                    outputFile << graphStr << endl;
-                }
-            } catch (const exception& e) {
-                cerr << "Error processing graph: " << graphStr << endl;
-                cerr << "Exception: " << e.what() << endl;
-            }
-        }
-
-        inputFile.close();
-        outputFile.close();
-    }
-
-    cout << "All files processed." << endl;
+    clock_t c_end = clock();
+    double time = double(c_end - c_start) / CLOCKS_PER_SEC;
+    cerr.precision(2);
+    cerr << ">Z " << count << " graphs passed filter in " << time << " sec" << endl;
     return 0;
 }
