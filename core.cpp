@@ -1,4 +1,4 @@
-#include "Core.h"
+#include "core.h"
 
 Core::Core(Graph *g) : core(g), DVtx(vector<bool>(g->getNumVertices(), false)),
                                  SVtx(vector<bool>(g->getNumVertices(), false)) {

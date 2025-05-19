@@ -5,12 +5,13 @@
 #include <string>
 #include <cmath>
 #include <limits>
-#include "Core.h"
+#include "core.h"
+#include "RSI.h"
+
 
 using namespace std;
 
-int main(int argc, const char *argv[])
-{
+int main(int argc, const char *argv[]) {
     string graph6_in;
     int count=0;
     clock_t c_start = clock();
@@ -31,3 +32,10 @@ int main(int argc, const char *argv[])
     cerr << ">Z " << count << " graphs passed filter in " << time << " sec" << endl;
     return 0;
 }
+
+// // check RSI Lemmas
+
+// int main() {
+//     check_all_RSI_Lemmas();
+//     return 0;
+// }

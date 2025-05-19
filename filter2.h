@@ -3,7 +3,7 @@
 
 #include<bits/stdc++.h>
 #include "graph.h"
-#include "Core.h"
+#include "core.h"
 using namespace std;
 #define NIL 0
 #define INF INT_MAX

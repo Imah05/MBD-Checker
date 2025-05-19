@@ -21,7 +21,7 @@ public:
     bool isSWin();
 
     // returns -1 if Dominator wins on every completion of this half completed core
-    // returns the low deg vtx v if we do not a priori know that Dominator 
+    // returns the low deg vtx v if we do n ot a priori know that Dominator 
     // wins and where v is a 'dangerous' vertex we want to use first when 
     // completing this halfcompleted core
     // returns -2 if we do not a priori know that Dominator 
