@@ -36,6 +36,18 @@ using namespace std;
 // check RSI Lemmas
 
 int main() {
-    check_all_RSI_Lemmas();
+    // check_all_RSI_Lemmas();
+
+    // checks, whether D. wins (going first) on every graph on at most 12 
+    // vertices, minimum degree 1 and sum_{v != w} |deg(v)-3| <= 5, 
+    // where w is a maxdeg vtx.
+    if(!check_R("geng -d1D9 12 16:19", 'D', 5).empty())
+        return false;
+    if(!check_R("geng -d1D8 11 14:17", 'D', 5).empty())
+        return false;
+    if(!check_R("geng -d1D3 10 13:13", 'D', 5).empty())
+        return false;
+
+
     return 0;
 }
