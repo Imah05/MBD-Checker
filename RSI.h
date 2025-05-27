@@ -16,6 +16,12 @@
 
 using namespace std;
 
+
+bool check_Lemma_R2();
+bool check_Lemma_R3();
+bool check_Lemma_R4();
+bool check_Lemma_R6();
+
 // checks all the RSI related Lemmas we want to do using computers. 
 // returns true iff the relevant Lemmas are verified.
 // TODO: add SI Lemmas for surplus 8 and maybe some R Lemmas
