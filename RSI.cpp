@@ -4,31 +4,54 @@ using namespace std;
 
 // this checks Lemma with the number 2 in the table
 bool check_Lemma_R2() {
+    cout << endl << endl<< "Checking Lemma #2 in the R-Lemma table..." << endl;
     if (check_R("geng -d1 5", 'S', 5).size() > 3)
         return false;
     if (check_R("geng -d1 6", 'S', 5).size() > 3)
         return false;
+    cout << "Lemma #2 in the R-Lemma table checked successfuly" << endl << endl;
     return true;
 }
 
 // this checks Lemma with the number 3 in the table
 bool check_Lemma_R3() {
-    return check_R("geng -d1 7", 'S', 2).empty();
+    cout << endl << endl<< "Checking Lemma #3 in the R-Lemma table..." << endl;
+    if(!check_R("geng -d1 4", 'S', 2).empty())
+        return false;
+    if(!check_R("geng -d1 5", 'S', 2).empty())
+        return false;
+    if(!check_R("geng -d1 6", 'S', 2).empty())
+        return false;
+    if(!check_R("geng -d1 7", 'S', 2).empty())
+        return false;    
+    cout << "Lemma #3 in the R-Lemma table checked successfuly" << endl << endl;
+    return true;
 }
 
 // this checks Lemma with the number 4 in the table
 bool check_Lemma_R4() {
-    if(!check_R("geng -d1D9 12 16:19", 'D', 5).empty())
+    cout << endl << endl<< "Checking Lemma #4 in the R-Lemma table..." << endl;
+    if(!check_R("geng -d1D3 9 11:11", 'D', 5).empty())
+        return false;
+    if(!check_R("geng -d1D6 10 13:14", 'D', 5).empty())
         return false;
     if(!check_R("geng -d1D8 11 14:17", 'D', 5).empty())
         return false;
-    if(!check_R("geng -d1D3 10 13:13", 'D', 5).empty())
-        return false;
+    if(!check_R("geng -d1D9 12 16:19", 'D', 5).empty())
+        return false;    
+    cout << "Lemma #4 in the R-Lemma table checked successfuly" << endl << endl;
+    return true;
 }
 
 // this checks Lemma with the number 6 in the table
 bool check_Lemma_R6() {
-    return (check_R("geng -d2 14 19:22", 'D', 5).empty());
+    cout << endl << endl<< "Checking Lemma #6 in the R-Lemma table..." << endl;
+    if (!check_R("geng -d2D9 13 17:20", 'D', 5).empty())
+        return false;
+    if (!check_R("geng -d2D9 14 19:22", 'D', 5).empty())
+        return false;
+    cout << "Lemma #6 in the R-Lemma table checked successfuly" << endl << endl;
+    return true;
 }
 
 bool check_SI(string cmd, char firstPlayer, int sur) {
