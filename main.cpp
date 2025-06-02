@@ -36,10 +36,13 @@ using namespace std;
 // check RSI Lemmas
 
 int main() {
-    check_Lemma_R2();
-    check_Lemma_R3();
-    check_Lemma_R4();
-    check_Lemma_R6(); // probably takes long
+    check_Lemma_SI1();
+    check_Lemma_SI2();
+    check_Lemma_SI3();
+    check_Lemma_SI4();
+    check_Lemma_SI5();
+    check_Lemma_SI6();
+    check_Lemma_SI7();
 
     return 0;
 }
