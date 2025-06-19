@@ -154,17 +154,16 @@ bool check_SI(string cmd, char firstPlayer, int sur) {
         string g6 = buffer;
         if (g6.back() == '\n')
             g6.pop_back();
-        Graph g(g6);
+        GameState gs(g6);
         int numOfDeg2Vtx = 0;
-        for(int i = 0; i < g.getNumVertices(); i++) {
-            if (g.neighborhood(i).size() == 2)
+        for(int i = 0; i < gs.getNumVertices(); i++) {
+            if (gs.deg(i) == 2)
                 ++numOfDeg2Vtx;
         }
         if (numOfDeg2Vtx > sur) {
             ++numOfGraphsWithWrongDegSeq;
         }
         else {
-            GameState gs = GameState(&g);
             if (gs.outcome(firstPlayer) == 'D')
                 ++numOfDomWinGraphs;
             else {
@@ -204,25 +203,24 @@ list<string> check_R(string cmd, char firstPlayer, int sur) {
         g6 = buffer;
         if (g6.back() == '\n')
             g6.pop_back();
-        Graph g(g6);
+        GameState gs(g6);
         int maxDeg = 0;
         int maxDegVtx;
-        for(int i = 0; i < g.getNumVertices(); i++) {
-            if (g.neighborhood(i).size() > maxDeg) {
-                maxDeg = g.neighborhood(i).size();
+        for(int i = 0; i < gs.getNumVertices(); i++) {
+            if (gs.deg(i) > maxDeg) {
+                maxDeg = gs.deg(i);
                 maxDegVtx = i;
             }
         }
         int cursur = 0;
-        for(int i = 0; i < g.getNumVertices(); i++) {
+        for(int i = 0; i < gs.getNumVertices(); i++) {
             if (i != maxDegVtx) 
-                cursur += (g.neighborhood(i).size() > 3 ? g.neighborhood(i).size() - 3 : 3 - g.neighborhood(i).size());
+                cursur += (gs.deg(i) > 3 ? gs.deg(i) - 3 : 3 - gs.deg(i));
         }
         if (cursur > sur) {
             ++numOfGraphsWithWrongDegSeq;
         }
         else {
-            GameState gs = GameState(&g);
             if (gs.outcome(firstPlayer) == 'D')
                 ++numOfDomWinGraphs;
             else {

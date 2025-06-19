@@ -1,8 +1,8 @@
 #include "GameState.h"
 #include "graph.h"
 
-GameState::GameState(Graph *g) : graph(g), DVtx(vector<bool>(g->getNumVertices(), false)),
-                                 SVtx(vector<bool>(g->getNumVertices(), false)) {
+GameState::GameState(string graph6) : Graph(graph6), DVtx(vector<bool>(getNumVertices(), false)),
+                                 SVtx(vector<bool>(getNumVertices(), false)) {
     update();
 }
 
@@ -10,7 +10,7 @@ GameState::GameState(Graph *g) : graph(g), DVtx(vector<bool>(g->getNumVertices()
 // updates gameStatDegSeq, totalPot, potSeq and remainingVtx so that they 
 // again match DVtx and SVtx.
 void GameState::update() {
-    int n = graph->getNumVertices();
+    int n = getNumVertices();
     gameStateDegSeq.assign(n, 0);
     potSeq.assign(n, 0.);
     totalPot = 0.;
@@ -18,7 +18,7 @@ void GameState::update() {
     for (int i = 0; i < n; ++i) {
         if (DVtx[i]) {
             gameStateDegSeq[i] = -1;
-            for (const auto& j : graph->neighborhood(i)) {
+            for (const auto& j : neighborhood(i)) {
                 gameStateDegSeq[j] = -1;
             }
         }
@@ -26,7 +26,7 @@ void GameState::update() {
             if (!SVtx[i]) {
                 ++gameStateDegSeq[i];
             }
-            for (const auto& j : graph->neighborhood(i)) {
+            for (const auto& j : neighborhood(i)) {
                 if (!SVtx[j]) {
                     ++gameStateDegSeq[i];
                 }
@@ -39,7 +39,7 @@ void GameState::update() {
             totalPot += pow(2,-gameStateDegSeq[i]);
         }
         if (!DVtx[i] && !SVtx[i]) {
-            for (const auto& j : graph->neighborhood(i)) {
+            for (const auto& j : neighborhood(i)) {
                 if (gameStateDegSeq[j] != -1) {
                     potSeq[i] += pow(2,-gameStateDegSeq[j]);
                 }
@@ -61,7 +61,7 @@ void GameState::update() {
 
 
 bool GameState::isSWin() {
-    for (int i = 0; i < graph->getNumVertices(); ++i) {
+    for (int i = 0; i < getNumVertices(); ++i) {
         if (gameStateDegSeq[i] == 0) {
             return true;
         }

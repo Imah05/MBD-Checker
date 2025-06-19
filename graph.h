@@ -15,9 +15,6 @@
 
 using namespace std;
 
-// forward declaration for outcome, which has yet to be defined.
-class GameState;
-
 class Graph {
 public:
     Graph(const string& graph6);
@@ -25,11 +22,11 @@ public:
     Graph& addEdge(int a, int b) const;
     int getNumVertices() const;
     const set<int>& neighborhood(int vtx) const;
+    int deg(int vtx) const;
     string toGraph6() const;
     // TODO:
     string toCanonicalGraph6() const;
     void printGraph() const;
-    // char outcome() const;
 
 private:
     vector<set<int>> graph; // graph[i] contains all the vertices

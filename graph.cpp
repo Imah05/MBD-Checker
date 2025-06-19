@@ -32,7 +32,7 @@ Graph::Graph(const string& graph6) {
     }
 }
 
-// returns wheter the two vertices u and v are adjacent
+// returns whether the two vertices u and v are adjacent
 bool Graph::hasEdge(int u, int v) const {
     return graph[u].count(v) > 0;
 }
@@ -54,6 +54,10 @@ const set<int>& Graph::neighborhood(int vtx) const {
     } else {
         throw out_of_range("Vertex index out of range.");
     }
+}
+
+int Graph::deg(int vtx) const {
+    return neighborhood(vtx).size();
 }
 
 // Graph to graph6 converter for testing

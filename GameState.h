@@ -8,13 +8,13 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cmath>
-# include "graph.h"
+#include "graph.h"
 
 using namespace std;
 
-class GameState {
+class GameState : public Graph {
 public:
-    GameState(Graph *g);
+    GameState(string graph6);
     void update();
     // void addDVtx(int dVtx);  // later, for optimization
     // void addSVtx(int sVtx);  // later, for optimization
@@ -27,7 +27,6 @@ public:
                                     // 'S' depending on who plays first
             
 private:
-    Graph *graph;       // pointer avoids expensive copying
     vector<bool> DVtx;  // DVtx[i] is true iff i is occupied by Dominator.
     vector<bool> SVtx;  // SVtx[i] is true iff i is occupied by Staller.
     vector<int> gameStateDegSeq;        // Degree sequence; D's vtx and vtx adj. to D's vtx have 'deg' -1; 
