@@ -3,7 +3,7 @@
 
 #include<bits/stdc++.h>
 #include "graph.h"
-#include "core.h"
+#include "core_game_state.h"
 using namespace std;
 #define NIL 0
 #define INF INT_MAX

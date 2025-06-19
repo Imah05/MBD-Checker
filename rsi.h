@@ -1,6 +1,8 @@
 #ifndef RSI_H
 #define RSI_H
 
+#include <list>
+
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -10,11 +12,10 @@
 #include <algorithm>
 #include <functional>
 #include <numeric>
-#include "GameState.h"   
+#include "game_state.h"   
 #include <stdexcept>
 #include <utility>
 
-using namespace std;
 
 
 bool check_Lemma_R2();

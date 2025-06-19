@@ -1,19 +1,36 @@
-#include "core.h"
+#include "core_game_state.h"
+#include <iostream>
+#include <list>
+#include <utility>
+#include <algorithm>
+#include <stdexcept>
+#include <cmath>
 
-Core::Core(Graph *g) : core(g), DVtx(vector<bool>(g->getNumVertices(), false)),
-                                 SVtx(vector<bool>(g->getNumVertices(), false)) {
+CoreGameState::CoreGameState(const string& graph6) : Graph(graph6), DVtx(vector<bool>(getN(), false)),
+                                 SVtx(vector<bool>(getN(), false)) {
     update();
 }
 
-bool Core::validCore() {
+void CoreGameState::addEdge(int u, int v) {
+    int n = getN();
+    if (u < 0 || v < 0 || u >= n || v >= n)
+        throw out_of_range("addEdge: vertex index out of bounds");
+    if (u == v)
+        throw invalid_argument("addEdge: self-loops are not allowed");
+    graph[u].insert(v);
+    graph[v].insert(u);
+    update();
+}
+
+bool CoreGameState::validCore() const {
     int total_deg_remaining = 0;
     for (auto& i : lowDegVtx) 
-    total_deg_remaining += 3 - core->neighborhood(i).size();
+    total_deg_remaining += 3 - deg(i);
     return total_deg_remaining%2 == 0;
 }
 
-bool Core::isSWin() {
-    for (int i = 0; i < core->getNumVertices(); ++i) {
+bool CoreGameState::isSWin() const {
+    for (int i = 0; i < getN(); ++i) {
         if (gameStateDegSeq[i] == 0) {
             return true;
         }
@@ -21,7 +38,8 @@ bool Core::isSWin() {
     return false;
 }
 
-int Core::out_lw_bnd(char firstPlayer) {
+
+int CoreGameState::out_lw_bnd(char firstPlayer) const {
     if (isSWin()) {
         return -2;
     }
@@ -31,7 +49,7 @@ int Core::out_lw_bnd(char firstPlayer) {
         if (totalPot < 1)
             return -1;
         int new_out = -1;
-        Core nextCoreGS = *this;
+        CoreGameState nextCoreGS = *this;
         for (const auto& i : remainingVtx) {
             nextCoreGS.DVtx[i] = true;
             nextCoreGS.update();
@@ -48,7 +66,7 @@ int Core::out_lw_bnd(char firstPlayer) {
         if (totalPot < 0.5)
             return -1;
         
-        Core nextCoreGS = *this;
+            CoreGameState nextCoreGS = *this;
         for (const auto& i : lowDegVtx) {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
@@ -70,43 +88,47 @@ int Core::out_lw_bnd(char firstPlayer) {
     return -2;
 }
 
-char Core::out_lw_bnd_after_lowDegMove(int vertex) {
-    int num_miss_edg = 3 - core->neighborhood(vertex).size();
+char CoreGameState::out_lw_bnd_after_lowDegMove(int vertex) const {
+    int num_miss_edg = 3 - deg(vertex);
+    double updated_total_pot = totalPot;
     int i = 0;
     int rem_edges = num_miss_edg;
     int poss_neigh;
     while(rem_edges > 0 && i < lowDegVtx.size()) {
         poss_neigh = lowDegVtx[i];
-        if (!core->neighborhood(vertex).count(poss_neigh) && poss_neigh != vertex) {
+        if (!hasEdge(vertex, poss_neigh) && poss_neigh != vertex) {
             if (gameStateDegSeq[poss_neigh] != -1)
-            totalPot += pow(2,-gameStateDegSeq[poss_neigh]);
+            updated_total_pot += pow(2,-gameStateDegSeq[poss_neigh]);
             --rem_edges;
         }
         ++i;
     }
-    if (rem_edges > 0 || totalPot < 1) 
+    if (rem_edges > 0 || updated_total_pot < 1) 
         return 'D';
     return 'S';
 }
 
-bool Core::filter() {
+bool CoreGameState::filter() const {
     if (!validCore()) 
-    return true;
+        return true;
     if (out_lw_bnd('D') == -1) 
-    return true;
+        return true;
     return false;
 }
 
 
 // does not check if core is valid, this is assumed to be done 
 // with filter() first
-bool Core::completion_filter() {
-    string test = core->toGraph6();
+bool CoreGameState::completion_filter() const {
+
+    // for testing purposes ---------------------
+    string test = toGraph6();
     int number_of_edges_to_add = 0;
     for (auto& i : lowDegVtx) {
-        number_of_edges_to_add += 3 - core->neighborhood(i).size();
+        number_of_edges_to_add += 3 - deg(i);
     }
     number_of_edges_to_add /= 2;
+    // end of for testing purposes --------------
 
     int a = out_lw_bnd('D');
 
@@ -120,12 +142,14 @@ bool Core::completion_filter() {
     int b;
     for (int i = 0; i < lowDegVtx.size(); ++i) {
         b = lowDegVtx[i];
-        if (!core->neighborhood(a).count(b) && b != a) {
+        if (!hasEdge(a, b) && b != a) {
             if (number_of_edges_to_add > 8) {
                 cout << number_of_edges_to_add << " edges remaining, joining edge " << a << ", " << b << endl;
             }
-            if(!Core(&core->addEdge(a, b)).completion_filter())
-            return false;
+            CoreGameState newCoreGameState(*this);
+            newCoreGameState.addEdge(a, b);
+            if(!newCoreGameState.completion_filter())
+                return false;
         }
     }
     return true;
@@ -136,31 +160,33 @@ set<string> nextCompl(set<string> g6set) {
     string g6;
 
     for (string g6 : g6set) {
-        Graph g = Graph(g6);
-        Core core = Core(&g);
-        int a = core.out_lw_bnd('D');
+        CoreGameState coregs = CoreGameState(g6);
+        int a = coregs.out_lw_bnd('D');
 
         if (a == -1)
             continue;
-        else if (core.lowDegVtx.size() == 0) {
+        else if (coregs.lowDegVtx.size() == 0) {
             cout << "Counterexample found!" << g6 << endl;
             return {"Counterexample:" + g6};
         }
         else if (a == -2)
-            a = core.lowDegVtx[0];
+            a = coregs.lowDegVtx[0];
     
         int b;
-        for (int i = 0; i < core.lowDegVtx.size(); ++i) {
-            b = core.lowDegVtx[i];
-            if (!core.core->neighborhood(a).count(b) && b != a)
-                out.insert((&core.core->addEdge(a, b))->toCanonicalGraph6());
+        for (int i = 0; i < coregs.lowDegVtx.size(); ++i) {
+            b = coregs.lowDegVtx[i];
+            if (!coregs.hasEdge(a, b) && b != a) {
+                CoreGameState newCoreGS(coregs);
+                newCoreGS.addEdge(a, b);
+                out.insert(newCoreGS.toCanonicalGraph6());
+            }
         }
     }
     return out;
 }
 
-bool Core::completion_filter2() {
-    set<string> g6set = {core->toCanonicalGraph6()};
+bool CoreGameState::completion_filter2() const {
+    set<string> g6set = {toCanonicalGraph6()};
     while(!g6set.empty()) {
         if ((*g6set.begin()).rfind("Counterexample:", 0) == 0)
             return false;
@@ -170,8 +196,8 @@ bool Core::completion_filter2() {
 }
 
 
-void Core::update() {
-    int n = core->getNumVertices();
+void CoreGameState::update() {
+    int n = getN();
     gameStateDegSeq.assign(n, 0);
     totalPot = 0.;
     remainingVtx.clear();
@@ -181,19 +207,19 @@ void Core::update() {
     for (int i = 0; i < n; ++i) {
         if (DVtx[i]) {
             gameStateDegSeq[i] = -1;
-            for (const auto& j : core->neighborhood(i)) 
+            for (const auto& j : neighborhood(i)) 
             gameStateDegSeq[j] = -1;
         }
         else if (gameStateDegSeq[i] != -1) {
             if (!SVtx[i]) 
             ++gameStateDegSeq[i];
 
-            for (const auto& j : core->neighborhood(i)) {
+            for (const auto& j : neighborhood(i)) {
                 if (!SVtx[j]) 
                 ++gameStateDegSeq[i];
             }
-            if (core->neighborhood(i).size() < 3) {
-                gameStateDegSeq[i] += 3 - core->neighborhood(i).size();
+            if (deg(i) < 3) {
+                gameStateDegSeq[i] += 3 - deg(i);
             }
         }
     }
@@ -202,15 +228,15 @@ void Core::update() {
         if (gameStateDegSeq[i] != -1)
         totalPot += pow(2,-gameStateDegSeq[i]);
 
-        if (!DVtx[i] && !SVtx[i] && core->neighborhood(i).size() >= 3) 
+        if (!DVtx[i] && !SVtx[i] && deg(i) >= 3) 
             remainingVtx.push_back(i);
 
-        if (core->neighborhood(i).size() < 3)
+        if (deg(i) < 3)
             lowDegVtx.push_back(i);
     }
 
     sort(remainingVtx.begin(), remainingVtx.end(), [&](auto left, auto right) {
-        return core->neighborhood(left).size() > core->neighborhood(right).size();
+        return deg(left) > deg(right);
     });
     sort(lowDegVtx.begin(), lowDegVtx.end(), [&](auto left, auto right) {
         if (gameStateDegSeq[right] == -1 && gameStateDegSeq[left] != -1) 
@@ -219,6 +245,6 @@ void Core::update() {
             return false;
         if (gameStateDegSeq[left] != gameStateDegSeq[right])
             return gameStateDegSeq[left] < gameStateDegSeq[right];
-        return core->neighborhood(left).size() < core->neighborhood(right).size();
+        return deg(left) < deg(right);
     });
 }

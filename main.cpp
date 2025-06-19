@@ -1,18 +1,19 @@
-#include "GameState.h"
+#include "game_state.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <cmath>
 #include <limits>
-#include "core.h"
-#include "RSI.h"
+#include "core_game_state.h"
+#include "rsi.h"
+#include <stdexcept>
 
 
 using namespace std;
 
 int main() {
-    GameState gs = GameState("EsP?");
-    cout << gs.outcome('D') << endl;
+
+    GameState g = GameState("EsP?");
     return 0;
 }

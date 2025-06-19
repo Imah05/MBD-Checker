@@ -1,4 +1,4 @@
-#include "RSI.h"
+#include "rsi.h"
 
 using namespace std;
 
@@ -156,7 +156,7 @@ bool check_SI(string cmd, char firstPlayer, int sur) {
             g6.pop_back();
         GameState gs(g6);
         int numOfDeg2Vtx = 0;
-        for(int i = 0; i < gs.getNumVertices(); i++) {
+        for(int i = 0; i < gs.getN(); i++) {
             if (gs.deg(i) == 2)
                 ++numOfDeg2Vtx;
         }
@@ -206,14 +206,14 @@ list<string> check_R(string cmd, char firstPlayer, int sur) {
         GameState gs(g6);
         int maxDeg = 0;
         int maxDegVtx;
-        for(int i = 0; i < gs.getNumVertices(); i++) {
+        for(int i = 0; i < gs.getN(); i++) {
             if (gs.deg(i) > maxDeg) {
                 maxDeg = gs.deg(i);
                 maxDegVtx = i;
             }
         }
         int cursur = 0;
-        for(int i = 0; i < gs.getNumVertices(); i++) {
+        for(int i = 0; i < gs.getN(); i++) {
             if (i != maxDegVtx) 
                 cursur += (gs.deg(i) > 3 ? gs.deg(i) - 3 : 3 - gs.deg(i));
         }

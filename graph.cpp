@@ -1,10 +1,14 @@
 #include "graph.h"
+#include <iostream>
+#include <fstream>
+#include <cstring>
 
-// constructor for the class Graph. Converts a string 
-// (graph6 format) into a graph and stores it in this.
 Graph::Graph(const string& graph6) {
     int n = graph6[0] - 63;
-
+    if (n < 0 || n > 62) {
+        throw invalid_argument("Graph Constructor: only graph6 strings with 
+            n < 63 are supported");
+    }
     graph = vector<set<int>>(n);
 
     int u = 0;
@@ -26,43 +30,39 @@ Graph::Graph(const string& graph6) {
             }
             else {
                 ++v;
-                u=0;
+                u = 0;
             }
         }
     }
 }
 
-// returns whether the two vertices u and v are adjacent
 bool Graph::hasEdge(int u, int v) const {
+    int n = getN();
+    if (u < 0 || v < 0 || u >= n || v >= n || u == v) {
+        return false;
+    }
     return graph[u].count(v) > 0;
 }
 
-Graph& Graph::addEdge(int a, int b) const {
-    Graph* newGraph = new Graph(*this);
-    newGraph->graph[a].insert(b);
-    newGraph->graph[b].insert(a);
-    return *newGraph;
-}
 
-int Graph::getNumVertices() const {
+int Graph::getN() const {
     return graph.size();
 }
 
-const set<int>& Graph::neighborhood(int vtx) const {
-    if (vtx >= 0 && vtx < graph.size()) {
-        return graph[vtx];
-    } else {
-        throw out_of_range("Vertex index out of range.");
+const set<int>& Graph::neighborhood(int u) const {
+    int n = getN();
+    if (u < 0 || u >= n) {
+        throw out_of_range("neighborhood: vertex index out of bounds");
     }
+    return graph[u];
 }
 
-int Graph::deg(int vtx) const {
-    return neighborhood(vtx).size();
+int Graph::deg(int u) const {
+    return neighborhood(u).size();
 }
 
-// Graph to graph6 converter for testing
 string Graph::toGraph6() const {
-    int n = graph.size();
+    int n = getN();
     string out = string();
     out += static_cast<char>(n + 63);
     int u = 0;
@@ -72,7 +72,7 @@ string Graph::toGraph6() const {
         powOfTwo = 32;
         curChar = 63;
         for (int j = 0; j < 6; ++j) {
-            if (u < n && hasEdge(u,v)) {
+            if (v < n && hasEdge(u,v)) {
                 curChar += powOfTwo;
             }
             powOfTwo /= 2;
@@ -81,7 +81,7 @@ string Graph::toGraph6() const {
             }
             else {
                 ++v;
-                u=0;
+                u = 0;
             }
         }
         out += static_cast<char>(curChar);
@@ -89,24 +89,22 @@ string Graph::toGraph6() const {
     return out;
 }
 
-std::string Graph::toCanonicalGraph6() const {
-    FILE*  fp;
-    char buff[100];
-    string cmd =  "echo "+toGraph6()+" | labelg -q";
-    if ((fp = popen(cmd.c_str(), "r"))== NULL){}
-    fgets(buff, sizeof(buff), fp);
-    return buff;
-}
-
-
-// Prints n lines of integers, such that in the ith line
-// all the vertices adjacent to vertex i-1 are listed.
-// Here n is the number of vertices of the graph.
-void Graph::printGraph() const {
-    for (int i = 0; i < graph.size(); i++) {
-        for (auto elem : graph[i]) {
-            cout << elem << " ";
-        }
-        cout << endl;
+string Graph::toCanonicalGraph6() const {
+    FILE* fp;
+    
+    string cmd =  "echo " + toGraph6() + " | labelg -q";
+    if ((fp = popen(cmd.c_str(), "r"))== NULL) {
+        throw runtime_error("toCanonicalGraph6: popen failed");
     }
+
+    char buff[512];
+    if (!fgets(buff, sizeof(buff), fp)) {
+        pclose(fp);
+        throw runtime_error("toCanonicalGraph6: fgets failed");
+    }
+
+    pclose(fp);
+    
+    buff[strcspn(buff, "\n")] = 0;
+    return string(buff);
 }
