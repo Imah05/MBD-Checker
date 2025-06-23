@@ -1,19 +1,11 @@
-#include "game_state.h"
+#include "part_compl_core_game_state.h"
 #include <iostream>
 #include <fstream>
-#include <vector>
-#include <string>
-#include <cmath>
-#include <limits>
-#include "core_game_state.h"
-#include "rsi.h"
-#include <stdexcept>
 
 
 using namespace std;
 
 int main() {
-
-    GameState g = GameState("EsP?");
-    return 0;
+    PartComplCoreGameState g("T?`C@@?_?_C?C?O?S?@_?K?@_?E??E??Ao??");
+    g.completion_filter2();
 }

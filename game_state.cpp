@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 GameState::GameState(string graph6) : Graph(graph6), 
                                 DVtx(vector<bool>(getN(), false)),
@@ -74,8 +75,8 @@ bool GameState::isSWin() {
 
 char GameState::outcome(char firstPlayer) {
     if (firstPlayer != 'D' && firstPlayer != 'S') {
-        throw invalid_argument("outcome: firstPlayer must be one of 
-            'D' or 'S'");
+        throw invalid_argument("outcome: firstPlayer must be one of "
+            "\'D\' or \'S\'");
         }
 
     if (isSWin()) {
@@ -113,4 +114,5 @@ char GameState::outcome(char firstPlayer) {
         }
         return 'D';
     }
+    throw logic_error("outcome: Reached unreachable code");
 }

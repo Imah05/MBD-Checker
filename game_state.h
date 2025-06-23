@@ -6,7 +6,7 @@
 class GameState : public Graph {
 public:
     // Creates a game state on the graph represented by a graph6 string, in
-    // in which all the vertices are unclaimed. 
+    // which all the vertices are unclaimed. 
     GameState(string graph6);
 
     // Updates the vectors gameStateDeg, pot and remVtx as well as the double 

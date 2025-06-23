@@ -86,7 +86,7 @@ bool filter1old(const string& g6) {
 }
 
 bool filter1(const string& g6) {
-    CoreGameState core = CoreGameState(g6);
+    PartComplCoreGameState core = PartComplCoreGameState(g6);
     bool isbad=!core.filter();
 	return isbad;
 }

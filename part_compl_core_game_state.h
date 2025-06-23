@@ -1,16 +1,18 @@
-#ifndef CORE_GAME_STATE_H
-#define CORE_GAME_STATE_H
+#ifndef PART_COMPL_CORE_GAME_STATE_H
+#define PART_COMPL_CORE_GAME_STATE_H
 
 #include <set>
 #include <string>
 #include <vector>
 #include "graph.h"
 
-class CoreGameState : public Graph {
+class PartComplCoreGameState : public Graph {
 public:
     // Creates a game state on a partially completed core represented by a 
     // graph6 string, in which all the vertices are unclaimed. 
-    CoreGameState(const string& graph6);
+    PartComplCoreGameState(const string& graph6);
+
+    void update();
 
     // Sets all the vertices ot be unclaimed, adds the edge uv to the underlying
     // graph and calls update(). 
@@ -30,7 +32,7 @@ public:
     bool filter() const;
     bool completion_filter() const;
     bool completion_filter2() const;
-    void update();
+    
 
     friend set<string> nextCompl(set<string> g6set);
             
@@ -39,10 +41,12 @@ private:
     vector<bool> DVtx;  // DVtx[i] is true iff i is occupied by Dominator.
     vector<bool> SVtx;  // SVtx[i] is true iff i is occupied by Staller.
     vector<int> gameStateDeg;
+    vector<double> pot;
+
     
     double totalPot;  // upper bound on total ES potential in any completion of core. 
     vector<int> remVtx;   // Vertices not claimed by Dominator nor Staller of deg
                                 // at least 3.
 };
 
-#endif // CORE_GAME_STATE_H
+#endif // PART_COMPL_CORE_GAME_STATE_H

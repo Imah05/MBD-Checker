@@ -1,4 +1,4 @@
-#include "core_game_state.h"
+#include "part_compl_core_game_state.h"
 #include <iostream>
 #include <list>
 #include <utility>
@@ -6,13 +6,82 @@
 #include <stdexcept>
 #include <cmath>
 
-CoreGameState::CoreGameState(const string& graph6) : 
+PartComplCoreGameState::PartComplCoreGameState(const string& graph6) : 
                             Graph(graph6), DVtx(vector<bool>(getN(), false)), 
                             SVtx(vector<bool>(getN(), false)) {
     update();
 }
 
-void CoreGameState::addEdge(int u, int v) {
+void PartComplCoreGameState::update() {
+    int n = getN();
+    totalPot = 0.;
+    remVtx.clear();
+    lowDegVtx.clear();
+    gameStateDeg.assign(n, 0);
+    pot.assign(n, 0.);
+
+    // set gameStateDeg[i] = -1 for dominated vertices i
+    for (int i = 0; i < n; ++i) {
+        if (DVtx[i]) {
+            gameStateDeg[i] = -1;
+            for (int j : neighborhood(i)) {
+                gameStateDeg[j] = -1;
+            }
+        }
+    }
+
+    // determine gameStateDeg[i] for undominated vertices i
+    for (int i = 0; i < n; ++i) {
+        if (gameStateDeg[i] != -1) {
+            if (!SVtx[i]) {
+                ++gameStateDeg[i];
+            }
+            for (int j : neighborhood(i)) {
+                if (!SVtx[j]) {
+                    ++gameStateDeg[i];
+                }
+            }
+            if (deg(i) < 3) {
+                gameStateDeg[i] += 3 - deg(i);
+            }
+        }
+    }
+
+    for (int i = 0; i < n; ++i) {
+        if (gameStateDeg[i] != -1) {
+            totalPot += pow(2,-gameStateDeg[i]);
+        }
+        if (deg(i) < 3) {
+            lowDegVtx.push_back(i);
+        }
+        else if (!DVtx[i] && !SVtx[i]) {
+            if (gameStateDeg[i] != -1) {
+                pot[i] += pow(2, -gameStateDeg[i]);
+            }
+            for (int j : neighborhood(i)) {
+                if (gameStateDeg[j] != -1) {
+                    pot[i] += pow(2, -gameStateDeg[j]);
+                }
+            }
+            remVtx.push_back(i);
+        }
+    }
+
+    sort(remVtx.begin(), remVtx.end(), [&](auto left, auto right) {
+        return pot[left] > pot[right];
+    });
+    sort(lowDegVtx.begin(), lowDegVtx.end(), [&](auto left, auto right) {
+        if (gameStateDeg[left] != -1 && gameStateDeg[right] == -1) 
+            return true;
+        if (gameStateDeg[left] == -1 && gameStateDeg[right] != -1) 
+            return false;
+        if (gameStateDeg[left] != gameStateDeg[right])
+            return gameStateDeg[left] < gameStateDeg[right];
+        return deg(left) < deg(right);
+    });
+}
+
+void PartComplCoreGameState::addEdge(int u, int v) {
     int n = getN();
     if (u < 0 || v < 0 || u >= n || v >= n) {
         throw out_of_range("addEdge: vertex index out of bounds");
@@ -27,7 +96,7 @@ void CoreGameState::addEdge(int u, int v) {
     update();
 }
 
-bool CoreGameState::isSWin() const {
+bool PartComplCoreGameState::isSWin() const {
     for (int i = 0; i < getN(); ++i) {
         if (gameStateDeg[i] == 0) {
             return true;
@@ -37,7 +106,7 @@ bool CoreGameState::isSWin() const {
 }
 
 
-int CoreGameState::outcomeLowerBound(char firstPlayer) const {
+int PartComplCoreGameState::outcomeLowerBound(char firstPlayer) const {
     if (isSWin()) {
         return -2;
     }
@@ -47,7 +116,7 @@ int CoreGameState::outcomeLowerBound(char firstPlayer) const {
         if (totalPot < 1)
             return -1;
         int new_out = -1;
-        CoreGameState nextCoreGS = *this;
+        PartComplCoreGameState nextCoreGS = *this;
         for (const auto& i : remVtx) {
             nextCoreGS.DVtx[i] = true;
             nextCoreGS.update();
@@ -64,7 +133,7 @@ int CoreGameState::outcomeLowerBound(char firstPlayer) const {
         if (totalPot < 0.5)
             return -1;
         
-            CoreGameState nextCoreGS = *this;
+            PartComplCoreGameState nextCoreGS = *this;
         for (const auto& i : lowDegVtx) {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
@@ -86,7 +155,7 @@ int CoreGameState::outcomeLowerBound(char firstPlayer) const {
     return -2;
 }
 
-char CoreGameState::out_lw_bnd_after_lowDegMove(int vertex) const {
+char PartComplCoreGameState::out_lw_bnd_after_lowDegMove(int vertex) const {
     int num_miss_edg = 3 - deg(vertex);
     double updated_total_pot = totalPot;
     int i = 0;
@@ -106,7 +175,7 @@ char CoreGameState::out_lw_bnd_after_lowDegMove(int vertex) const {
     return 'S';
 }
 
-bool CoreGameState::filter() const {
+bool PartComplCoreGameState::filter() const {
     int sum = 0;
     for (int i : lowDegVtx) {
         sum += 3 - deg(i);
@@ -120,7 +189,7 @@ bool CoreGameState::filter() const {
 
 // does not check if core is valid, this is assumed to be done 
 // with filter() first
-bool CoreGameState::completion_filter() const {
+bool PartComplCoreGameState::completion_filter() const {
 
     // for testing purposes ---------------------
     string test = toGraph6();
@@ -147,7 +216,7 @@ bool CoreGameState::completion_filter() const {
             if (number_of_edges_to_add > 8) {
                 cout << number_of_edges_to_add << " edges remaining, joining edge " << a << ", " << b << endl;
             }
-            CoreGameState newCoreGameState(*this);
+            PartComplCoreGameState newCoreGameState(*this);
             newCoreGameState.addEdge(a, b);
             if(!newCoreGameState.completion_filter())
                 return false;
@@ -161,14 +230,14 @@ set<string> nextCompl(set<string> g6set) {
     string g6;
 
     for (string g6 : g6set) {
-        CoreGameState coregs = CoreGameState(g6);
+        PartComplCoreGameState coregs = PartComplCoreGameState(g6);
         int a = coregs.outcomeLowerBound('D');
 
         if (a == -1)
             continue;
         else if (coregs.lowDegVtx.size() == 0) {
             cout << "Counterexample found!" << g6 << endl;
-            return {"Counterexample:" + g6};
+            return {"Counterexample found!"};
         }
         else if (a == -2)
             a = coregs.lowDegVtx[0];
@@ -177,7 +246,7 @@ set<string> nextCompl(set<string> g6set) {
         for (int i = 0; i < coregs.lowDegVtx.size(); ++i) {
             b = coregs.lowDegVtx[i];
             if (!coregs.hasEdge(a, b) && b != a) {
-                CoreGameState newCoreGS(coregs);
+                PartComplCoreGameState newCoreGS(coregs);
                 newCoreGS.addEdge(a, b);
                 out.insert(newCoreGS.toCanonicalGraph6());
             }
@@ -186,66 +255,13 @@ set<string> nextCompl(set<string> g6set) {
     return out;
 }
 
-bool CoreGameState::completion_filter2() const {
+bool PartComplCoreGameState::completion_filter2() const {
     set<string> g6set = {toCanonicalGraph6()};
     while(!g6set.empty()) {
-        if ((*g6set.begin()).rfind("Counterexample:", 0) == 0)
+        if (g6set == set<string> {"Counterexample found!"}) {
             return false;
+        }
         g6set = nextCompl(g6set);
     }
     return true;
-}
-
-
-void CoreGameState::update() {
-    int n = getN();
-    gameStateDeg.assign(n, 0);
-    totalPot = 0.;
-    remVtx.clear();
-    lowDegVtx.clear();
-
-    // update gameStateDeg
-    for (int i = 0; i < n; ++i) {
-        if (DVtx[i]) {
-            gameStateDeg[i] = -1;
-            for (const auto& j : neighborhood(i)) 
-            gameStateDeg[j] = -1;
-        }
-        else if (gameStateDeg[i] != -1) {
-            if (!SVtx[i]) 
-            ++gameStateDeg[i];
-
-            for (const auto& j : neighborhood(i)) {
-                if (!SVtx[j]) 
-                ++gameStateDeg[i];
-            }
-            if (deg(i) < 3) {
-                gameStateDeg[i] += 3 - deg(i);
-            }
-        }
-    }
-
-    for (int i = 0; i < n; ++i) {
-        if (gameStateDeg[i] != -1)
-        totalPot += pow(2,-gameStateDeg[i]);
-
-        if (!DVtx[i] && !SVtx[i] && deg(i) >= 3) 
-            remVtx.push_back(i);
-
-        if (deg(i) < 3)
-            lowDegVtx.push_back(i);
-    }
-
-    sort(remVtx.begin(), remVtx.end(), [&](auto left, auto right) {
-        return deg(left) > deg(right);
-    });
-    sort(lowDegVtx.begin(), lowDegVtx.end(), [&](auto left, auto right) {
-        if (gameStateDeg[right] == -1 && gameStateDeg[left] != -1) 
-            return true;
-        if (gameStateDeg[left] == -1 && gameStateDeg[right] != -1) 
-            return false;
-        if (gameStateDeg[left] != gameStateDeg[right])
-            return gameStateDeg[left] < gameStateDeg[right];
-        return deg(left) < deg(right);
-    });
 }

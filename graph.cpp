@@ -6,8 +6,8 @@
 Graph::Graph(const string& graph6) {
     int n = graph6[0] - 63;
     if (n < 0 || n > 62) {
-        throw invalid_argument("Graph Constructor: only graph6 strings with 
-            n < 63 are supported");
+        throw invalid_argument("Graph Constructor: only graph6 strings with "
+            "n < 63 are supported");
     }
     graph = vector<set<int>>(n);
 
@@ -90,21 +90,44 @@ string Graph::toGraph6() const {
 }
 
 string Graph::toCanonicalGraph6() const {
-    FILE* fp;
-    
-    string cmd =  "echo " + toGraph6() + " | labelg -q";
-    if ((fp = popen(cmd.c_str(), "r"))== NULL) {
+    string graph6 = toGraph6();
+
+    ofstream tempIn("temp_input.g6");
+    tempIn << graph6;
+    tempIn.close();
+
+    FILE* fp = popen("labelg -q temp_input.g6", "r");
+    if (!fp) {
         throw runtime_error("toCanonicalGraph6: popen failed");
     }
 
-    char buff[512];
+    char buff[100];
     if (!fgets(buff, sizeof(buff), fp)) {
         pclose(fp);
         throw runtime_error("toCanonicalGraph6: fgets failed");
     }
-
     pclose(fp);
-    
+
     buff[strcspn(buff, "\n")] = 0;
     return string(buff);
 }
+
+// string Graph::toCanonicalGraph6() const {
+//     FILE* fp;
+    
+//     string cmd =  "echo " + toGraph6() + " | labelg -q";
+//     if ((fp = popen(cmd.c_str(), "r"))== NULL) {
+//         throw runtime_error("toCanonicalGraph6: popen failed");
+//     }
+
+//     char buff[100];
+//     if (!fgets(buff, sizeof(buff), fp)) {
+//         pclose(fp);
+//         throw runtime_error("toCanonicalGraph6: fgets failed");
+//     }
+
+//     pclose(fp);
+    
+//     buff[strcspn(buff, "\n")] = 0;
+//     return string(buff);
+// }
