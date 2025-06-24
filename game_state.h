@@ -15,11 +15,6 @@ public:
     // the two vectors DVtx and SVtx remain unchanged.
     void update();
 
-    // Returns whether there is a vertex i with gameStateDeg[i] = 0, that is a
-    // vertex claimed by Staller, all of whose neighbors are claimed by Staller
-    // as well.
-    bool isSWin();
-
     // Returns 'D' if Dominator wins and 'S' if Staller wins in the 
     // Maker-Breaker Domination game on this game state. firstPlayer has to be 
     // 'D' or 'S' depending on whether Dominator or Staller starts the game. 

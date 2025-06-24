@@ -111,23 +111,3 @@ string Graph::toCanonicalGraph6() const {
     buff[strcspn(buff, "\n")] = 0;
     return string(buff);
 }
-
-// string Graph::toCanonicalGraph6() const {
-//     FILE* fp;
-    
-//     string cmd =  "echo " + toGraph6() + " | labelg -q";
-//     if ((fp = popen(cmd.c_str(), "r"))== NULL) {
-//         throw runtime_error("toCanonicalGraph6: popen failed");
-//     }
-
-//     char buff[100];
-//     if (!fgets(buff, sizeof(buff), fp)) {
-//         pclose(fp);
-//         throw runtime_error("toCanonicalGraph6: fgets failed");
-//     }
-
-//     pclose(fp);
-    
-//     buff[strcspn(buff, "\n")] = 0;
-//     return string(buff);
-// }

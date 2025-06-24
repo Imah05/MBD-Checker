@@ -64,23 +64,16 @@ void GameState::update() {
     });
 }
 
-bool GameState::isSWin() {
-    for (int i = 0; i < getN(); ++i) {
-        if (gameStateDeg[i] == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 char GameState::outcome(char firstPlayer) {
     if (firstPlayer != 'D' && firstPlayer != 'S') {
         throw invalid_argument("outcome: firstPlayer must be one of "
             "\'D\' or \'S\'");
         }
 
-    if (isSWin()) {
-        return 'S';
+    for (int i = 0; i < getN(); ++i) {
+        if (gameStateDeg[i] == 0) {
+            return 'S';
+        }
     }
     
     if (firstPlayer == 'D') {
