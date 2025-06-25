@@ -25,11 +25,11 @@ public:
     // completing this halfcompleted core
     // returns -2 if we do not a priori know that Dominator 
     // wins, but we don't have a hint vertex for the completion
-    int outcomeLowerBound(char firstPlayer) const; 
+    int outcome(char firstPlayer) const; 
     char out_lw_bnd_after_lowDegMove(int vertex) const; 
     bool filter() const;
     bool completion_filter() const;
-    bool completion_filter2() const;
+    bool completionFilter() const;
     void update();
 
     friend set<string> nextCompl(set<string> g6set);

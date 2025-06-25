@@ -17,7 +17,7 @@
 //         graph6 = buffer;
 
 //         PartComplCoreGameState pccgs(graph6);
-//         int numOfDeg2Vtx = 0;
+        
 //         for(int i = 0; i < pccgs.getN(); i++) {
 //             if (pccgs.deg(i) == 2)
 //                 ++numOfDeg2Vtx;

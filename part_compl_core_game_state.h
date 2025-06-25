@@ -24,26 +24,49 @@ public:
     // completing this halfcompleted core
     // returns -2 if we do not a priori know that Dominator 
     // wins, but we don't have a hint vertex for the completion
-    int outcomeLowerBound(char firstPlayer) const; 
+    int outcome(char firstPlayer) const; 
     char out_lw_bnd_after_lowDegMove(int vertex) const; 
-    bool filter() const;
-    bool completion_filter() const;
-    bool completion_filter2() const;
-    
-
-    friend set<string> nextCompl(set<string> g6set);
+    bool completionFilter() const;
             
 private:
-    vector<int> lowDegVtx;
-    vector<bool> DVtx;  // DVtx[i] is true iff i is occupied by Dominator.
-    vector<bool> SVtx;  // SVtx[i] is true iff i is occupied by Staller.
+    
+
+    // A vector of length getN() such that DVtx[i] is true if and only if the 
+    // vertex i is claimed by Dominator. DVtx[i] is always false for vertices i
+    // of degree less than 3.
+    vector<bool> DVtx;
+
+    // A vector of length getN() such that SVtx[i] is true if and only if the 
+    // vertex i is claimed by Staller. SVtx[i] is always false for vertices i
+    // of degree less than 3.
+    vector<bool> SVtx;
+
+    // A vector of length getN() with the following property. If the vertex i is 
+    // claimed by Dominator or adjacent to a vertex claimed by Dominator, then 
+    // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is calculated as follows.
+    // Let x be the number of unclaimed vertices in the closed neighborhood of 
+    // i (the neighborhood of i including i itself). If i has degree at least 3,
+    // then gameStateDeg[i] = x, otherwise gameStateDeg[i] = x + 3 - deg(i).
     vector<int> gameStateDeg;
+
+    // A vector containing all the vertices of the underlying graph, that have 
+    // degree strictly less than three, ordered such that for two vertices i and
+    // j of degree at most 2 it holds that
+    // - if gameStateDeg[i] != -1 and gameStateDeg[j] = -1, then i preceeds j,
+    // - if -1 < gameStateDeg[i] < gameStateDeg[j] then i preceeds j,
+    // - if gameStateDeg[i] = gameStateDeg[j] and deg(i) < deg(j), then i
+    //   preceeds j.
+    vector<int> lowDegVtx;
+
+
     vector<double> pot;
 
+    // totalPot is an upper bound on total ES potential in any completion of 
+    // this.
+    double totalPot;
     
-    double totalPot;  // upper bound on total ES potential in any completion of core. 
-    vector<int> remVtx;   // Vertices not claimed by Dominator nor Staller of deg
-                                // at least 3.
+    // A vector containing all unlcaimed vertices of degree at least 3. 
+    vector<int> remVtx;
 };
 
 #endif // PART_COMPL_CORE_GAME_STATE_H

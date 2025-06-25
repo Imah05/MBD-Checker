@@ -96,7 +96,11 @@ void PartComplCoreGameState::addEdge(int u, int v) {
     update();
 }
 
-int PartComplCoreGameState::outcomeLowerBound(char firstPlayer) const {
+int PartComplCoreGameState::outcome(char firstPlayer) const {
+    if (firstPlayer != 'D' && firstPlayer != 'S') {
+        throw invalid_argument("outcome: firstPlayer must be one of "
+            "\'D\' or \'S\'");
+    }
     for (int i = 0; i < getN(); ++i) {
         if (gameStateDeg[i] == 0) {
             return -2;
@@ -112,7 +116,7 @@ int PartComplCoreGameState::outcomeLowerBound(char firstPlayer) const {
         for (const auto& i : remVtx) {
             nextCoreGS.DVtx[i] = true;
             nextCoreGS.update();
-            new_out = nextCoreGS.outcomeLowerBound('S');
+            new_out = nextCoreGS.outcome('S');
             if (new_out == -1)
                 return -1;
             else if (out == -2) 
@@ -136,7 +140,7 @@ int PartComplCoreGameState::outcomeLowerBound(char firstPlayer) const {
         for (const auto& i : remVtx) {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
-            out = nextCoreGS.outcomeLowerBound('D');
+            out = nextCoreGS.outcome('D');
             if (out != -1)
                 return out;
             nextCoreGS.SVtx[i] = false;
@@ -167,93 +171,36 @@ char PartComplCoreGameState::out_lw_bnd_after_lowDegMove(int vertex) const {
     return 'S';
 }
 
-bool PartComplCoreGameState::filter() const {
-    int sum = 0;
-    for (int i : lowDegVtx) {
-        sum += 3 - deg(i);
-    }
-    if (sum%2 == 1 || outcomeLowerBound('D') == -1) {
-        return true;
-    }
-    return false;
-}
+bool PartComplCoreGameState::completionFilter() const {
+    set<string> g6Set = {toCanonicalGraph6()};
+    while(!g6Set.empty()) {
+        set<string> newG6Set;
+        string g6;
 
-
-// does not check if core is valid, this is assumed to be done 
-// with filter() first
-bool PartComplCoreGameState::completion_filter() const {
-
-    // for testing purposes ---------------------
-    string test = toGraph6();
-    int number_of_edges_to_add = 0;
-    for (auto& i : lowDegVtx) {
-        number_of_edges_to_add += 3 - deg(i);
-    }
-    number_of_edges_to_add /= 2;
-    // end of for testing purposes --------------
-
-    int a = outcomeLowerBound('D');
-
-    if (a == -1)
-        return true;
-    else if (lowDegVtx.size() == 0)
-        return false;
-    else if (a == -2)
-        a = lowDegVtx[0];
-
-    int b;
-    for (int i = 0; i < lowDegVtx.size(); ++i) {
-        b = lowDegVtx[i];
-        if (!hasEdge(a, b) && b != a) {
-            if (number_of_edges_to_add > 8) {
-                cout << number_of_edges_to_add << " edges remaining, joining edge " << a << ", " << b << endl;
+        for (string g6 : g6Set) {
+            PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
+            int a = coreGs.outcome('D');
+            if (a == -1) {
+                continue;
             }
-            PartComplCoreGameState newCoreGameState(*this);
-            newCoreGameState.addEdge(a, b);
-            if(!newCoreGameState.completion_filter())
+            else if (coreGs.lowDegVtx.size() == 0) {
                 return false;
-        }
-    }
-    return true;
-}
-
-set<string> nextCompl(set<string> g6set) {
-    set<string> out;
-    string g6;
-
-    for (string g6 : g6set) {
-        PartComplCoreGameState coregs = PartComplCoreGameState(g6);
-        int a = coregs.outcomeLowerBound('D');
-
-        if (a == -1)
-            continue;
-        else if (coregs.lowDegVtx.size() == 0) {
-            cout << "Counterexample found!" << g6 << endl;
-            return {"Counterexample found!"};
-        }
-        else if (a == -2)
-            a = coregs.lowDegVtx[0];
-    
-        int b;
-        for (int i = 0; i < coregs.lowDegVtx.size(); ++i) {
-            b = coregs.lowDegVtx[i];
-            if (!coregs.hasEdge(a, b) && b != a) {
-                PartComplCoreGameState newCoreGS(coregs);
-                newCoreGS.addEdge(a, b);
-                out.insert(newCoreGS.toCanonicalGraph6());
+            }
+            else if (a == -2) {
+                a = coreGs.lowDegVtx[0];
+            }
+        
+            int b;
+            for (int i = 0; i < coreGs.lowDegVtx.size(); ++i) {
+                b = coreGs.lowDegVtx[i];
+                if (!coreGs.hasEdge(a, b) && b != a) {
+                    PartComplCoreGameState newCoreGS(coreGs);
+                    newCoreGS.addEdge(a, b);
+                    newG6Set.insert(newCoreGS.toCanonicalGraph6());
+                }
             }
         }
-    }
-    return out;
-}
-
-bool PartComplCoreGameState::completion_filter2() const {
-    set<string> g6set = {toCanonicalGraph6()};
-    while(!g6set.empty()) {
-        if (g6set == set<string> {"Counterexample found!"}) {
-            return false;
-        }
-        g6set = nextCompl(g6set);
+        g6Set = newG6Set;
     }
     return true;
 }

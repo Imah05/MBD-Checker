@@ -37,7 +37,7 @@ bool CoreGameState::isSWin() const {
 }
 
 
-int CoreGameState::outcomeLowerBound(char firstPlayer) const {
+int CoreGameState::outcome(char firstPlayer) const {
     if (isSWin()) {
         return -2;
     }
@@ -51,7 +51,7 @@ int CoreGameState::outcomeLowerBound(char firstPlayer) const {
         for (const auto& i : remVtx) {
             nextCoreGS.DVtx[i] = true;
             nextCoreGS.update();
-            new_out = nextCoreGS.outcomeLowerBound('S');
+            new_out = nextCoreGS.outcome('S');
             if (new_out == -1)
                 return -1;
             else if (out == -2) 
@@ -75,7 +75,7 @@ int CoreGameState::outcomeLowerBound(char firstPlayer) const {
         for (const auto& i : remVtx) {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
-            out = nextCoreGS.outcomeLowerBound('D');
+            out = nextCoreGS.outcome('D');
             if (out != -1)
                 return out;
             nextCoreGS.SVtx[i] = false;
@@ -111,7 +111,7 @@ bool CoreGameState::filter() const {
     for (int i : lowDegVtx) {
         sum += 3 - deg(i);
     }
-    if (sum%2 == 1 || outcomeLowerBound('D') == -1) {
+    if (sum%2 == 1 || outcome('D') == -1) {
         return true;
     }
     return false;
@@ -131,7 +131,7 @@ bool CoreGameState::completion_filter() const {
     number_of_edges_to_add /= 2;
     // end of for testing purposes --------------
 
-    int a = outcomeLowerBound('D');
+    int a = outcome('D');
 
     if (a == -1)
         return true;
@@ -162,7 +162,7 @@ set<string> nextCompl(set<string> g6set) {
 
     for (string g6 : g6set) {
         CoreGameState coregs = CoreGameState(g6);
-        int a = coregs.outcomeLowerBound('D');
+        int a = coregs.outcome('D');
 
         if (a == -1)
             continue;
@@ -186,7 +186,7 @@ set<string> nextCompl(set<string> g6set) {
     return out;
 }
 
-bool CoreGameState::completion_filter2() const {
+bool CoreGameState::completionFilter() const {
     set<string> g6set = {toCanonicalGraph6()};
     while(!g6set.empty()) {
         if ((*g6set.begin()).rfind("Counterexample:", 0) == 0)
