@@ -14,12 +14,9 @@ public:
 
     void update();
 
-    // Sets all the vertices ot be unclaimed, adds the edge uv to the underlying
+    // Sets all the vertices to be unclaimed, adds the edge uv to the underlying
     // graph and calls update(). 
     void addEdge(int u, int v);
-
-
-    bool isSWin() const;
 
     // returns -1 if Dominator wins on every completion of this half completed core
     // returns the low deg vtx v if we do n ot a priori know that Dominator 

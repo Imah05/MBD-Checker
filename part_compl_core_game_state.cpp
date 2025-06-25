@@ -96,19 +96,11 @@ void PartComplCoreGameState::addEdge(int u, int v) {
     update();
 }
 
-bool PartComplCoreGameState::isSWin() const {
+int PartComplCoreGameState::outcomeLowerBound(char firstPlayer) const {
     for (int i = 0; i < getN(); ++i) {
         if (gameStateDeg[i] == 0) {
-            return true;
+            return -2;
         }
-    }
-    return false;
-}
-
-
-int PartComplCoreGameState::outcomeLowerBound(char firstPlayer) const {
-    if (isSWin()) {
-        return -2;
     }
     int out = -2;
 
