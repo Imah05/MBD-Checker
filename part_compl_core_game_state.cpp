@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <stdexcept>
 #include <cmath>
+#include <fstream>
+#include <cstring>
 
 PartComplCoreGameState::PartComplCoreGameState(const string& graph6) : 
                             Graph(graph6), DVtx(vector<bool>(getN(), false)), 
@@ -106,88 +108,110 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
             return -2;
         }
     }
-    int out = -2;
 
     if (firstPlayer == 'D') {
-        if (totalPot < 1)
+        if (totalPot < 1) {
             return -1;
-        int new_out = -1;
+        }
+        int out = -2;
+        int newOut;
         PartComplCoreGameState nextCoreGS = *this;
-        for (const auto& i : remVtx) {
+        for (int i : remVtx) {
             nextCoreGS.DVtx[i] = true;
             nextCoreGS.update();
-            new_out = nextCoreGS.outcome('S');
-            if (new_out == -1)
+            newOut = nextCoreGS.outcome('S');
+            if (newOut == -1) {
                 return -1;
-            else if (out == -2) 
-                out = new_out;
+            }
+            else if (out == -2) {
+                out = newOut;
+            }
             nextCoreGS.DVtx[i] = false;
         }
-        return out;
+        if (out != -2) {
+            return out;
+        }
+        else if (lowDegVtx.size() > 0) {
+            return lowDegVtx[0];
+        }
+        else {
+            return -2;
+        }
     }
     else if (firstPlayer == 'S') {
-        if (totalPot < 0.5)
+        if (totalPot < 0.5) {
             return -1;
-        
-            PartComplCoreGameState nextCoreGS = *this;
-        for (const auto& i : lowDegVtx) {
-            nextCoreGS.SVtx[i] = true; 
-            nextCoreGS.update(); 
-            if(nextCoreGS.out_lw_bnd_after_lowDegMove(i) == 'S') 
-                return i;
-            nextCoreGS.SVtx[i] = false;
         }
-        for (const auto& i : remVtx) {
+        
+        PartComplCoreGameState nextCoreGS = *this;
+        for (int i : lowDegVtx) {
+            int missingEdges = 3 - deg(i);
+            double newTotalPot = totalPot + pow(2, -gameStateDeg[i]);
+            int j = 0;
+            while (missingEdges > 0 && j < lowDegVtx.size()) {
+                int possNeigh = lowDegVtx[j];
+                if (!hasEdge(i, possNeigh) && i != possNeigh) {
+                    if (gameStateDeg[possNeigh] != -1) {
+                        newTotalPot += pow(2, -gameStateDeg[possNeigh]);
+                    }
+                    missingEdges--;
+                }
+                ++j;
+            }
+            if (missingEdges == 0 && newTotalPot >= 1) {
+                return i;
+            }
+        }
+        for (int i : remVtx) {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
-            out = nextCoreGS.outcome('D');
+            int out = nextCoreGS.outcome('D');
             if (out != -1)
                 return out;
             nextCoreGS.SVtx[i] = false;
         }
         return -1;
     }
-    cout << "firstPlayer has to be one of 'D' or 'S'!" << endl;
-    return -2;
 }
 
-char PartComplCoreGameState::out_lw_bnd_after_lowDegMove(int vertex) const {
-    int num_miss_edg = 3 - deg(vertex);
-    double updated_total_pot = totalPot;
-    int i = 0;
-    int rem_edges = num_miss_edg;
-    int poss_neigh;
-    while(rem_edges > 0 && i < lowDegVtx.size()) {
-        poss_neigh = lowDegVtx[i];
-        if (!hasEdge(vertex, poss_neigh) && poss_neigh != vertex) {
-            if (gameStateDeg[poss_neigh] != -1)
-            updated_total_pot += pow(2,-gameStateDeg[poss_neigh]);
-            --rem_edges;
-        }
-        ++i;
+
+set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
+    const string inputFile = "temp_input.g6";
+    const string command = "labelg -q " + inputFile;
+    ofstream tempIn(inputFile);
+    if (!tempIn) {
+        throw runtime_error("labelCanonicalBatch: failed to open temp_input.g6 for writing");
     }
-    if (rem_edges > 0 || updated_total_pot < 1) 
-        return 'D';
-    return 'S';
+    for (string g6 : graph6Vec) {
+        tempIn << g6 << '\n';
+    }
+    tempIn.close();
+    FILE* fp = popen(command.c_str(), "r");
+    if (!fp) {
+        throw runtime_error("labelCanonicalBatch: popen failed");
+    }
+    set<string> result;
+    char buff[100];
+    while (fgets(buff, sizeof(buff), fp)) {
+        buff[strcspn(buff, "\n")] = 0;
+        result.insert(string(buff));
+    }
+    pclose(fp);
+    return result;
 }
 
 bool PartComplCoreGameState::completionFilter() const {
     set<string> g6Set = {toCanonicalGraph6()};
     while(!g6Set.empty()) {
-        set<string> newG6Set;
-        string g6;
-
+        vector<string> newG6Vec;
         for (string g6 : g6Set) {
             PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
             int a = coreGs.outcome('D');
             if (a == -1) {
                 continue;
             }
-            else if (coreGs.lowDegVtx.size() == 0) {
-                return false;
-            }
             else if (a == -2) {
-                a = coreGs.lowDegVtx[0];
+                return false;
             }
         
             int b;
@@ -196,11 +220,22 @@ bool PartComplCoreGameState::completionFilter() const {
                 if (!coreGs.hasEdge(a, b) && b != a) {
                     PartComplCoreGameState newCoreGS(coreGs);
                     newCoreGS.addEdge(a, b);
-                    newG6Set.insert(newCoreGS.toCanonicalGraph6());
+
+
+                    for (int a = 0; a < getN(); ++a) {
+                        if (newCoreGS.deg(a) > 3) {
+                            for (int b : newCoreGS.neighborhood(a)) {
+                                if (newCoreGS.deg(b) > 3) {
+                                    cout << "debug error: core with adjacent highdegvtx";
+                                }
+                            }
+                        }
+                    }
+                    newG6Vec.push_back(newCoreGS.toGraph6());
                 }
             }
         }
-        g6Set = newG6Set;
+        g6Set = labelCanonicalBatch(newG6Vec);
     }
     return true;
 }

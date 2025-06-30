@@ -19,26 +19,23 @@ public:
     void addEdge(int u, int v);
 
     // returns -1 if Dominator wins on every completion of this half completed core
-    // returns the low deg vtx v if we do n ot a priori know that Dominator 
+    // returns the low deg vtx v if we do not a priori know that Dominator 
     // wins and where v is a 'dangerous' vertex we want to use first when 
     // completing this halfcompleted core
-    // returns -2 if we do not a priori know that Dominator 
-    // wins, but we don't have a hint vertex for the completion
-    int outcome(char firstPlayer) const; 
-    char out_lw_bnd_after_lowDegMove(int vertex) const; 
+    // returns -2 if there are no lowDegVtx and Staller wins.
+    int outcome(char firstPlayer) const;
+
+    
     bool completionFilter() const;
             
 private:
-    
-
     // A vector of length getN() such that DVtx[i] is true if and only if the 
     // vertex i is claimed by Dominator. DVtx[i] is always false for vertices i
     // of degree less than 3.
     vector<bool> DVtx;
 
     // A vector of length getN() such that SVtx[i] is true if and only if the 
-    // vertex i is claimed by Staller. SVtx[i] is always false for vertices i
-    // of degree less than 3.
+    // vertex i is claimed by Staller.
     vector<bool> SVtx;
 
     // A vector of length getN() with the following property. If the vertex i is 

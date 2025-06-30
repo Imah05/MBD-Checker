@@ -4,6 +4,7 @@
 #include "part_compl_core_game_state.h"
 #include <list>
 
-// bool completionCheck(string cmd, vector<vector<int>>);
+bool completionCheck(int, vector<int>);
+bool checkAllCores();
 
 #endif // COMPLETION_CHECKER_H

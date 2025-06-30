@@ -68,7 +68,7 @@ char GameState::outcome(char firstPlayer) {
     if (firstPlayer != 'D' && firstPlayer != 'S') {
         throw invalid_argument("outcome: firstPlayer must be one of "
             "\'D\' or \'S\'");
-        }
+    }
 
     for (int i = 0; i < getN(); ++i) {
         if (gameStateDeg[i] == 0) {
