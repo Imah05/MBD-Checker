@@ -9,20 +9,26 @@ public:
     // graph6 string, in which all the vertices are unclaimed. 
     PartComplCoreGameState(const string& graph6);
 
+    // Updates the vectors gameStateDeg, pot, lowDegVtx and remVtx as well as the double 
+    // totalPot so that they satisfy their conditions as described below. The 
+    // graph itself as well as the vertices claimed by the two players, that is
+    // the two vectors DVtx and SVtx remain unchanged.
     void update();
 
-    // Sets all the vertices to be unclaimed, adds the edge uv to the underlying
-    // graph and calls update(). 
+    // Adds the edge uv to the underlying graph.
     void addEdge(int u, int v);
+    // Removes the edge uv to the underlying graph.
+    void removeEdge(int u, int v);
 
     // returns -1 if Dominator wins on every completion of this half completed core
     // returns the low deg vtx v if we do not a priori know that Dominator 
     // wins and where v is a 'dangerous' vertex we want to use first when 
     // completing this halfcompleted core
-    // returns -2 if there are no lowDegVtx and Staller wins.
+    // returns -2 if Staller wins on a completion of this. 
     int outcome(char firstPlayer) const;
 
-    
+    // returns true if Dominator wins on every completion of this and false
+    // otherwise.
     bool completionFilter() const;
             
 private:
@@ -32,15 +38,14 @@ private:
     vector<bool> DVtx;
 
     // A vector of length getN() such that SVtx[i] is true if and only if the 
-    // vertex i is claimed by Staller.
+    // vertex i is claimed by Staller. SVtx[i] is always false for vertices i
+    // of degree less than 3.
     vector<bool> SVtx;
 
     // A vector of length getN() with the following property. If the vertex i is 
     // claimed by Dominator or adjacent to a vertex claimed by Dominator, then 
-    // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is calculated as follows.
-    // Let x be the number of unclaimed vertices in the closed neighborhood of 
-    // i (the neighborhood of i including i itself). If i has degree at least 3,
-    // then gameStateDeg[i] = x, otherwise gameStateDeg[i] = x + 3 - deg(i).
+    // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is the number of unclaimed vertices in the closed neighborhood of 
+    // i (the neighborhood of i including i itself).
     vector<int> gameStateDeg;
 
     // A vector containing all the vertices of the underlying graph, that have 
@@ -52,11 +57,14 @@ private:
     //   preceeds j.
     vector<int> lowDegVtx;
 
-
+    // For an unclaimed vertex i, pot[i] measures by how much the overall 
+    // Erdős-Selfridge potential drops if Dominator claims vertex i in the next
+    // move. This is the same as the quantity by which the overall potential 
+    // increases if Staller claims vertex i in the next move. For claimed 
+    // vertices j, pot[j] is undefined and can be anything.
     vector<double> pot;
 
-    // totalPot is an upper bound on total ES potential in any completion of 
-    // this.
+    // totalPot is the total ES potential in any completion of this.
     double totalPot;
     
     // A vector containing all unlcaimed vertices of degree at least 3. 

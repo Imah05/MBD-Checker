@@ -101,11 +101,15 @@ void PartComplCoreGameState::addEdge(int u, int v) {
     if (u == v) {
         throw invalid_argument("addEdge: self-loops are not allowed");
     }
-    DVtx = vector<bool>(n, false);
-    SVtx = vector<bool>(n, false);
     graph[u].insert(v);
     graph[v].insert(u);
-    update();
+}
+
+void PartComplCoreGameState::removeEdge(int u, int v) {
+    if (hasEdge(u, v)) {
+        graph[u].erase(v);
+        graph[v].erase(u);
+    }
 }
 
 int PartComplCoreGameState::outcome(char firstPlayer) const {
@@ -155,8 +159,16 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
         
         PartComplCoreGameState nextCoreGS = *this;
         for (int i : lowDegVtx) {
+            double newTotalPot = totalPot;
+            if (gameStateDeg[i] != -1) {
+                newTotalPot += pow(2, -gameStateDeg[i]);
+            }
+            for (int j : neighborhood(i)) {
+                if (gameStateDeg[j] != -1) {
+                    newTotalPot += pow(2, -gameStateDeg[j]);
+                }
+            }
             int missingEdges = 3 - deg(i);
-            double newTotalPot = totalPot + pow(2, -gameStateDeg[i]);
             int j = 0;
             while (missingEdges > 0 && j < lowDegVtx.size()) {
                 int possNeigh = lowDegVtx[j];
@@ -176,8 +188,9 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
             int out = nextCoreGS.outcome('D');
-            if (out != -1)
+            if (out != -1) {
                 return out;
+            }
             nextCoreGS.SVtx[i] = false;
         }
         return -1;
@@ -186,8 +199,8 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
 
 
 set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
-    const string inputFile = "temp_input.g6";
-    const string command = "labelg -q " + inputFile;
+    string inputFile = "temp_input.g6";
+    string command = "nauty-labelg -q " + inputFile;
     ofstream tempIn(inputFile);
     if (!tempIn) {
         throw runtime_error("labelCanonicalBatch: failed to open temp_input.g6 for writing");
@@ -223,25 +236,12 @@ bool PartComplCoreGameState::completionFilter() const {
             else if (a == -2) {
                 return false;
             }
-        
-            int b;
-            for (int i = 0; i < coreGs.lowDegVtx.size(); ++i) {
-                b = coreGs.lowDegVtx[i];
+            PartComplCoreGameState newCoreGS(coreGs);
+            for (int b : lowDegVtx) {
                 if (!coreGs.hasEdge(a, b) && b != a) {
-                    PartComplCoreGameState newCoreGS(coreGs);
                     newCoreGS.addEdge(a, b);
-
-
-                    for (int a = 0; a < getN(); ++a) {
-                        if (newCoreGS.deg(a) > 3) {
-                            for (int b : newCoreGS.neighborhood(a)) {
-                                if (newCoreGS.deg(b) > 3) {
-                                    cout << "debug error: core with adjacent highdegvtx";
-                                }
-                            }
-                        }
-                    }
                     newG6Vec.push_back(newCoreGS.toGraph6());
+                    newCoreGS.removeEdge(a, b);
                 }
             }
         }
@@ -257,7 +257,7 @@ bool completionCheckDegSeq(int n, vector<int> seq) {
         numberOfEdges += i;
     }
     ostringstream cmdS;
-    cmdS << "genbg -d" << seq[0] << ":0 -D" << seq.back() << ":3 " << seq.size()
+    cmdS << "nauty-genbg -d" << seq[0] << ":0 -D" << seq.back() << ":3 " << seq.size()
     << " " << n - seq.size() << " " << numberOfEdges << ":" << numberOfEdges;
     string cmd = cmdS.str();
 
@@ -313,7 +313,7 @@ bool completionCheckDegSeq(int n, vector<int> seq) {
         }
         sort(curSeq.begin(), curSeq.end());
 
-        if (curSeq == seq && !pccgs.completionFilter()) {
+        if (curSeq == seq &&!pccgs.completionFilter()) {
             pclose(pipe);
             return false;
         }
@@ -327,7 +327,7 @@ bool completionCheckDegSeq(int n, vector<int> seq) {
         else if (durMs < 30000) ++under30s;
         else if (durMs < 120000) ++under2min;
         else if (durMs < 360000) ++under6min;
-        else if (durMS < 1800000) ++under30min;
+        else if (durMs < 1800000) ++under30min;
         else ++over30min;
     }
 
@@ -357,7 +357,7 @@ bool checkAllSeq(string inFileName) {
         while (iss >> val) {
             ++n;
             if (val > 3) {
-                seqWithout3s.push_back(val);
+                seq.push_back(val);
             }
         }
     // REPLACE BELOW CODE BY THIS ONECE WE DON'T HAVE A MAXIMUM TIME FOR A 

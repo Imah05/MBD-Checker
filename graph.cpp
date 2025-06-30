@@ -96,7 +96,7 @@ string Graph::toCanonicalGraph6() const {
     tempIn << graph6;
     tempIn.close();
 
-    FILE* fp = popen("labelg -q temp_input.g6", "r");
+    FILE* fp = popen("nauty-labelg -q temp_input.g6", "r");
     if (!fp) {
         throw runtime_error("toCanonicalGraph6: popen failed");
     }
