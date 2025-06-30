@@ -7,6 +7,16 @@
 #include <cmath>
 #include <fstream>
 #include <cstring>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <numeric>
+#include <sstream>
+#include <cstdio>
+#include <thread>
+
+using namespace std;
+using namespace std::chrono;
 
 PartComplCoreGameState::PartComplCoreGameState(const string& graph6) : 
                             Graph(graph6), DVtx(vector<bool>(getN(), false)), 
@@ -236,6 +246,126 @@ bool PartComplCoreGameState::completionFilter() const {
             }
         }
         g6Set = labelCanonicalBatch(newG6Vec);
+    }
+    return true;
+}
+
+bool completionCheckDegSeq(int n, vector<int> seq) {
+    sort(seq.begin(), seq.end());
+    int numberOfEdges = 0;
+    for (int i : seq) {
+        numberOfEdges += i;
+    }
+    ostringstream cmdS;
+    cmdS << "genbg -d" << seq[0] << ":0 -D" << seq.back() << ":3 " << seq.size()
+    << " " << n - seq.size() << " " << numberOfEdges << ":" << numberOfEdges;
+    string cmd = cmdS.str();
+
+    FILE *pipe = popen(cmd.c_str(), "r");
+    if (!pipe) {
+        throw runtime_error("completionCheckDegSeq: popen failed");
+    }
+    
+    auto startTime = steady_clock::now();
+    auto lastReport = startTime;
+    const auto maxDuration = minutes(6000);
+    const auto reportInterval = minutes(30);
+    int totalCounter = 0, under100ms = 0, under2s = 0, under30s = 0, 
+        under2min = 0, under6min = 0, under30min = 0, over30min = 0;
+
+    char buffer[128];
+    while (fgets(buffer, sizeof(buffer), pipe)) {
+        auto t0 = steady_clock::now();
+        if (t0 - startTime > maxDuration) {
+            pclose(pipe);
+            cout << "time out: completionCheckDegSeq terminated for n = " << n
+            << " and seq = ";
+            for (int i : seq) {
+                cout << i << " ";
+            }
+            cout << endl;
+            return false;
+        }
+
+        if (t0 - lastReport >= reportInterval) {
+            cout << "[completionCheck progress at "
+                 << duration_cast<minutes>(t0 - startTime).count() << " mins]: "
+                 << "total: " << totalCounter 
+                 << ", under 0.1s: " << under100ms
+                 << ", 0.1s–2s: " << under2s
+                 << ", 2s–30s: " << under30s
+                 << ", 30s–2min: " << under2min
+                 << ", 2min–6min: " << under6min
+                 << ", 6min–30min: " << under30min
+                 << ", 30min+: " << over30min
+                 << endl;
+            lastReport = t0;
+        }
+        buffer[strcspn(buffer, "\n")] = 0;
+        string graph6 = buffer;
+
+        PartComplCoreGameState pccgs(graph6);
+        vector<int> curSeq;
+        for (int i = 0; i < pccgs.getN(); ++i) {
+            if (pccgs.deg(i) > 3) {
+                curSeq.push_back(pccgs.deg(i));
+            }
+        }
+        sort(curSeq.begin(), curSeq.end());
+
+        if (curSeq == seq && !pccgs.completionFilter()) {
+            pclose(pipe);
+            return false;
+        }
+
+        auto t1 = steady_clock::now();
+        auto durMs = duration_cast<milliseconds>(t1 - t0).count();
+
+        ++totalCounter;
+        if (durMs < 100) ++under100ms;
+        else if (durMs < 2000) ++under2s;
+        else if (durMs < 30000) ++under30s;
+        else if (durMs < 120000) ++under2min;
+        else if (durMs < 360000) ++under6min;
+        else if (durMS < 1800000) ++under30min;
+        else ++over30min;
+    }
+
+    pclose(pipe);
+    cout << "completionCheckDegSeq finished for n = " << n << " and seq = ";
+            for (int i : seq) {
+                cout << i << " ";
+            }
+            cout << endl;
+    return true;
+}
+
+
+bool checkAllSeq(string inFileName) {
+    ifstream inFile(inFileName);
+    if (!inFile) {
+        cerr << "Error: Could not open " << inFileName << "\n";
+        return false;
+    }
+
+    string line;
+    while (getline(inFile, line)) {
+        istringstream iss(line);
+        vector<int> seq;
+        int val, n = 0;
+
+        while (iss >> val) {
+            ++n;
+            if (val > 3) {
+                seqWithout3s.push_back(val);
+            }
+        }
+    // REPLACE BELOW CODE BY THIS ONECE WE DON'T HAVE A MAXIMUM TIME FOR A 
+    // SINGLE DEGREE SEQUENCE ANYMORE
+    //     if (!completionCheck(n, seq)) {
+    //         return false;
+    //     }
+        completionCheckDegSeq(n, seq);
     }
     return true;
 }

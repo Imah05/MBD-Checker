@@ -7,5 +7,5 @@
 using namespace std;
 
 int main() {
-    checkAllCores();
+    checkAllDegSeq("input_sequences.txt");
 }

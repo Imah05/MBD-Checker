@@ -1,9 +1,6 @@
 #ifndef PART_COMPL_CORE_GAME_STATE_H
 #define PART_COMPL_CORE_GAME_STATE_H
 
-#include <set>
-#include <string>
-#include <vector>
 #include "graph.h"
 
 class PartComplCoreGameState : public Graph {
@@ -65,5 +62,9 @@ private:
     // A vector containing all unlcaimed vertices of degree at least 3. 
     vector<int> remVtx;
 };
+
+bool completionCheckDegSeq(int n, vector<int> seq);
+
+bool checkAllSeq(string inFileName);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H
