@@ -255,122 +255,123 @@ bool PartComplCoreGameState::completionFilter() const {
     return true;
 }
 
-bool completionCheckDegSeq(int n, vector<int> seq) {
-    sort(seq.begin(), seq.end());
-    int numberOfEdges = 0;
-    for (int i : seq) {
-        numberOfEdges += i;
-    }
-    ostringstream cmdS;
-    cmdS << "nauty-genbg -d" << seq[0] << ":0 -D" << seq.back() << ":3 " << seq.size()
-    << " " << n - seq.size() << " " << numberOfEdges << ":" << numberOfEdges;
-    string cmd = cmdS.str();
 
-    FILE *pipe = popen(cmd.c_str(), "r");
-    if (!pipe) {
-        throw runtime_error("completionCheckDegSeq: popen failed");
-    }
-    
-    auto startTime = steady_clock::now();
-    auto lastReport = startTime;
-    const auto maxDuration = minutes(6000);
-    const auto reportInterval = minutes(30);
-    int totalCounter = 0, under100ms = 0, under2s = 0, under30s = 0, 
-        under2min = 0, under6min = 0, under30min = 0, over30min = 0;
-
-    char buffer[128];
-    while (fgets(buffer, sizeof(buffer), pipe)) {
-        auto t0 = steady_clock::now();
-        if (t0 - startTime > maxDuration) {
-            pclose(pipe);
-            cout << "time out: completionCheckDegSeq terminated for n = " << n
-            << " and seq = ";
-            for (int i : seq) {
-                cout << i << " ";
-            }
-            cout << endl;
-            return false;
-        }
-
-        if (t0 - lastReport >= reportInterval) {
-            cout << "[completionCheck progress at "
-                 << duration_cast<minutes>(t0 - startTime).count() << " mins]: "
-                 << "total: " << totalCounter 
-                 << ", under 0.1s: " << under100ms
-                 << ", 0.1s–2s: " << under2s
-                 << ", 2s–30s: " << under30s
-                 << ", 30s–2min: " << under2min
-                 << ", 2min–6min: " << under6min
-                 << ", 6min–30min: " << under30min
-                 << ", 30min+: " << over30min
-                 << endl;
-            lastReport = t0;
-        }
-        buffer[strcspn(buffer, "\n")] = 0;
-        string graph6 = buffer;
-
-        PartComplCoreGameState pccgs(graph6);
-        vector<int> curSeq;
-        for (int i = 0; i < pccgs.getN(); ++i) {
-            if (pccgs.deg(i) > 3) {
-                curSeq.push_back(pccgs.deg(i));
-            }
-        }
-        sort(curSeq.begin(), curSeq.end());
-
-        if (curSeq == seq &&!pccgs.completionFilter()) {
-            pclose(pipe);
-            return false;
-        }
-
-        auto t1 = steady_clock::now();
-        auto durMs = duration_cast<milliseconds>(t1 - t0).count();
-
-        ++totalCounter;
-        if (durMs < 100) ++under100ms;
-        else if (durMs < 2000) ++under2s;
-        else if (durMs < 30000) ++under30s;
-        else if (durMs < 120000) ++under2min;
-        else if (durMs < 360000) ++under6min;
-        else if (durMs < 1800000) ++under30min;
-        else ++over30min;
-    }
-
-    pclose(pipe);
-    cout << "completionCheckDegSeq finished for n = " << n << " and seq = ";
-            for (int i : seq) {
-                cout << i << " ";
-            }
-            cout << endl;
-    return true;
-}
-
-
-bool checkAllSeq(string inFileName) {
+bool checkFile(const string& inFileName) {
     ifstream inFile(inFileName);
     if (!inFile) {
         cerr << "Error: Could not open " << inFileName << "\n";
         return false;
     }
 
+    vector<vector<int>> seqs;
     string line;
+    bool readingSeq = true;
+    int n;
+
     while (getline(inFile, line)) {
+        if (line.empty()) {
+            readingSeq = false;
+            break;
+        }
         istringstream iss(line);
         vector<int> seq;
-        int val, n = 0;
-
+        int val;
+        n = 0;
         while (iss >> val) {
-            ++n;
             if (val > 3) {
                 seq.push_back(val);
             }
+            n++;
         }
-    // REPLACE BELOW CODE BY THIS ONECE WE DON'T HAVE A MAXIMUM TIME FOR A 
-    // SINGLE DEGREE SEQUENCE ANYMORE
-    //     if (!completionCheck(n, seq)) {
-    //         return false;
-    //     }
-        completionCheckDegSeq(n, seq);
+        sort(seq.begin(), seq.end());
+        seqs.push_back(move(seq));
     }
-    return true;
+
+    if (readingSeq) {
+        cerr << "Error: No blank line separating header from graph6 data\n";
+        return false;
+    }
+
+    cout << "Checking sequences: " << endl;
+    for (vector<int> seq : seqs) {
+        cout << "n = " << n << ", high Vtx = ";
+        for (int i : seq) {
+            cout << i << " ";
+        }
+        cout << endl;
+    }
+
+    streampos graphsStartPos = inFile.tellg();
+    int graphCount = 0;
+    while (getline(inFile, line)) {
+        if (!line.empty()) ++graphCount;
+    }
+    cout << "Number of cores to check: " << graphCount << endl;
+    inFile.clear();
+    inFile.seekg(graphsStartPos);
+    
+    auto startTime = steady_clock::now();
+    auto lastReport = startTime;
+    const auto maxDuration = minutes(6000);
+    const auto reportInterval = minutes(1);
+    int totalCounter = 0, under1s = 0, under1min = 0, under30min = 0,
+            over30min = 0;
+
+    while (getline(inFile, line)) {
+        auto t0 = steady_clock::now();
+        if (t0 - startTime > maxDuration) {
+            cout << "time out: completionCheckDegSeq terminated" << endl << endl;
+            return false;
+        }
+        auto now = system_clock::now();
+        time_t now_time = system_clock::to_time_t(now);
+        tm local_tm = *localtime(&now_time);
+        if (t0 - lastReport >= reportInterval) {
+            cout << put_time(&local_tm, "%H:%M:%S") << endl
+                 << "total: " << totalCounter 
+                 << ", under 1s: " << under1s
+                 << ", 1s–1min: " << under1min
+                 << ", 1min-30min: " << under30min
+                 << ", 30min+: " << over30min
+                 << endl;
+            lastReport = t0;
+        }
+
+        if (line.empty()) {
+            continue;
+        }
+
+        PartComplCoreGameState pccgs(line);
+        vector<int> curSeq;
+        for (int i = 0; i < pccgs.getN(); ++i) {
+            int deg = pccgs.deg(i);
+            if (deg > 3) {
+                curSeq.push_back(deg);
+            }
+        }
+        sort(curSeq.begin(), curSeq.end());
+
+        bool matchesAny = false;
+        for (vector<int> seq : seqs) {
+            if (seq == curSeq) {
+                matchesAny = true;
+                break;
+            }
+        }
+        if (matchesAny) {
+            if (!pccgs.completionFilter()) {
+                return false; 
+            }
+        }
+        auto t1 = steady_clock::now();
+        auto durMs = duration_cast<seconds>(t1 - t0).count();
+
+        ++totalCounter;
+        if (durMs < 1) ++under1s;
+        else if (durMs < 60) ++under1min;
+        else if (durMs < 1800) ++under30min;
+        else ++over30min;
+    }
+    cout << "Finished checking" << endl << endl;
+    return true; 
 }

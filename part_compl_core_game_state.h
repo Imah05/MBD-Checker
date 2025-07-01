@@ -71,8 +71,7 @@ private:
     vector<int> remVtx;
 };
 
-bool completionCheckDegSeq(int n, vector<int> seq);
 
-bool checkAllSeq(string inFileName);
+bool checkFile(const string& inFileName);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H
