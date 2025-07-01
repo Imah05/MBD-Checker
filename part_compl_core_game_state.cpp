@@ -227,6 +227,7 @@ bool PartComplCoreGameState::completionFilter() const {
     set<string> g6Set = {toCanonicalGraph6()};
     while(!g6Set.empty()) {
         vector<string> newG6Vec;
+        int numberOfPCC;
         for (string g6 : g6Set) {
             PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
             int a = coreGs.outcome('D');
@@ -237,8 +238,11 @@ bool PartComplCoreGameState::completionFilter() const {
                 return false;
             }
             PartComplCoreGameState newCoreGS(coreGs);
-            for (int b : lowDegVtx) {
+            for (int b : coreGs.lowDegVtx) {
                 if (!coreGs.hasEdge(a, b) && b != a) {
+                    if (coreGs.deg(a) > 3 || coreGs.deg(b) > 3) {
+                        cout << "Hilfe!!!" << endl;
+                    }
                     newCoreGS.addEdge(a, b);
                     newG6Vec.push_back(newCoreGS.toGraph6());
                     newCoreGS.removeEdge(a, b);
@@ -246,6 +250,7 @@ bool PartComplCoreGameState::completionFilter() const {
             }
         }
         g6Set = labelCanonicalBatch(newG6Vec);
+        numberOfPCC = g6Set.size();
     }
     return true;
 }
