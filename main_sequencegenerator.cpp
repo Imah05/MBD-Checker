@@ -1,5 +1,5 @@
 #include "graph.h"
-#include "GameState.h"
+#include "game_state.h"
 #include "filter2.h"
 #include <iostream>
 #include <fstream>

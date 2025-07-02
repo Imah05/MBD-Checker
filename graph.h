@@ -22,11 +22,6 @@ public:
     int deg(int u) const;
 
     string toGraph6() const;
-    
-    // Envokes nauty's labelg to generate a canoncial graph6 string
-    // not depending on the labelling of the graph. Returns the same
-    // string for isomorphic graphs. 
-    string toCanonicalGraph6() const;
 
 protected:
     // graph[i] contains all the vertices adjacent to vertex i.

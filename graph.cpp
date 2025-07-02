@@ -88,26 +88,3 @@ string Graph::toGraph6() const {
     }
     return out;
 }
-
-string Graph::toCanonicalGraph6() const {
-    string graph6 = toGraph6();
-
-    ofstream tempIn("temp_input.g6");
-    tempIn << graph6;
-    tempIn.close();
-
-    FILE* fp = popen("nauty-labelg -q temp_input.g6", "r");
-    if (!fp) {
-        throw runtime_error("toCanonicalGraph6: popen failed");
-    }
-
-    char buff[100];
-    if (!fgets(buff, sizeof(buff), fp)) {
-        pclose(fp);
-        throw runtime_error("toCanonicalGraph6: fgets failed");
-    }
-    pclose(fp);
-
-    buff[strcspn(buff, "\n")] = 0;
-    return string(buff);
-}

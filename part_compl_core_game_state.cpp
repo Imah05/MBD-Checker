@@ -198,17 +198,18 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
 }
 
 
-set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
-    string inputFile = "temp_input.g6";
-    string command = "nauty-labelg -q " + inputFile;
-    ofstream tempIn(inputFile);
-    if (!tempIn) {
+set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileName) {
+    string fileName = "temp//" + inFileName;
+    string command = "labelg -q " + fileName;
+    ofstream outFile(fileName);
+    if (!outFile) {
         throw runtime_error("labelCanonicalBatch: failed to open temp_input.g6 for writing");
     }
     for (string g6 : graph6Vec) {
-        tempIn << g6 << '\n';
+        outFile << g6 << '\n';
     }
-    tempIn.close();
+    outFile.close();
+    
     FILE* fp = popen(command.c_str(), "r");
     if (!fp) {
         throw runtime_error("labelCanonicalBatch: popen failed");
@@ -220,13 +221,17 @@ set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
         result.insert(string(buff));
     }
     pclose(fp);
+    if (remove(fileName.c_str()) != 0) {
+        cerr << ("Error deleting temporary file");
+    }
     return result;
 }
 
-bool PartComplCoreGameState::completionFilter() const {
-    set<string> g6Set = {toCanonicalGraph6()};
-    while(!g6Set.empty()) {
-        vector<string> newG6Vec;
+bool PartComplCoreGameState::completionFilter(string inFileName) const {
+    vector<string> g6Vec = {toGraph6()};
+    while(!g6Vec.empty()) {
+        set<string> g6Set = labelCanonicalBatch(g6Vec, inFileName);
+        g6Vec.clear();
         int numberOfPCC;
         for (string g6 : g6Set) {
             PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
@@ -244,12 +249,11 @@ bool PartComplCoreGameState::completionFilter() const {
                         cout << "Hilfe!!!" << endl;
                     }
                     newCoreGS.addEdge(a, b);
-                    newG6Vec.push_back(newCoreGS.toGraph6());
+                    g6Vec.push_back(newCoreGS.toGraph6());
                     newCoreGS.removeEdge(a, b);
                 }
             }
         }
-        g6Set = labelCanonicalBatch(newG6Vec);
         numberOfPCC = g6Set.size();
     }
     return true;
@@ -257,9 +261,9 @@ bool PartComplCoreGameState::completionFilter() const {
 
 
 bool checkFile(const string& inFileName) {
-    ifstream inFile(inFileName);
+    ifstream inFile("Cores//" + inFileName);
     if (!inFile) {
-        cerr << "Error: Could not open " << inFileName << "\n";
+        cerr << "Error: Could not open " << "Cores//" << inFileName << endl;
         return false;
     }
 
@@ -291,14 +295,20 @@ bool checkFile(const string& inFileName) {
         cerr << "Error: No blank line separating header from graph6 data\n";
         return false;
     }
+    string outFileName = "Cores//output//" + inFileName;
+    ofstream outFile(outFileName);
+    if (!outFile) {
+        cerr << "Could not open " << outFileName << endl;
+        return false;
+    }
 
-    cout << "Checking sequences: " << endl;
+    outFile << "Checking sequences: " << endl;
     for (vector<int> seq : seqs) {
-        cout << "n = " << n << ", high Vtx = ";
+        outFile << "n = " << n << ", high Vtx = ";
         for (int i : seq) {
-            cout << i << " ";
+            outFile << i << " ";
         }
-        cout << endl;
+        outFile << endl;
     }
 
     streampos graphsStartPos = inFile.tellg();
@@ -306,28 +316,28 @@ bool checkFile(const string& inFileName) {
     while (getline(inFile, line)) {
         if (!line.empty()) ++graphCount;
     }
-    cout << "Number of cores to check: " << graphCount << endl;
+    outFile << "Number of cores to check: " << graphCount << endl;
     inFile.clear();
     inFile.seekg(graphsStartPos);
     
     auto startTime = steady_clock::now();
     auto lastReport = startTime;
     const auto maxDuration = minutes(6000);
-    const auto reportInterval = minutes(1);
+    const auto reportInterval = minutes(30);
     int totalCounter = 0, under1s = 0, under1min = 0, under30min = 0,
             over30min = 0;
 
     while (getline(inFile, line)) {
         auto t0 = steady_clock::now();
         if (t0 - startTime > maxDuration) {
-            cout << "time out: completionCheckDegSeq terminated" << endl << endl;
+            outFile << "time out: completionCheckDegSeq terminated" << endl << endl;
             return false;
         }
         auto now = system_clock::now();
         time_t now_time = system_clock::to_time_t(now);
         tm local_tm = *localtime(&now_time);
         if (t0 - lastReport >= reportInterval) {
-            cout << put_time(&local_tm, "%H:%M:%S") << endl
+            outFile << put_time(&local_tm, "%H:%M:%S") << endl
                  << "total: " << totalCounter 
                  << ", under 1s: " << under1s
                  << ", 1s–1min: " << under1min
@@ -359,7 +369,7 @@ bool checkFile(const string& inFileName) {
             }
         }
         if (matchesAny) {
-            if (!pccgs.completionFilter()) {
+            if (!pccgs.completionFilter(inFileName)) {
                 return false; 
             }
         }
@@ -372,6 +382,9 @@ bool checkFile(const string& inFileName) {
         else if (durMs < 1800) ++under30min;
         else ++over30min;
     }
-    cout << "Finished checking" << endl << endl;
+    inFile.close();
+    outFile << "Finished checking" << endl << endl;
+    rename(outFileName.c_str(), ("Cores//output//FINISHED_" + inFileName).c_str());
+    outFile.close();
     return true; 
 }

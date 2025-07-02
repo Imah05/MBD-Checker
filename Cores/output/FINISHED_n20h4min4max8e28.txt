@@ -1,0 +1,12 @@
+Checking sequences: 
+n = 20, high Vtx = 4 8 8 8 
+n = 20, high Vtx = 5 7 8 8 
+n = 20, high Vtx = 7 7 7 7 
+n = 20, high Vtx = 6 6 8 8 
+Number of cores to check: 66929
+16:48:09
+total: 45660, under 1s: 45658, 1s–1min: 2, 1min-30min: 0, 30min+: 0
+16:49:19
+total: 53154, under 1s: 53149, 1s–1min: 5, 1min-30min: 0, 30min+: 0
+Finished checking
+
