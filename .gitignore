@@ -20,6 +20,7 @@ bin/
 *.tmp
 trash/
 Cores/*
+temp/*
 !Cores/nauty-cmds.txt
 !Cores/Jakobs-deg-seq.txt
 !Cores/output/
