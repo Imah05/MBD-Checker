@@ -1,0 +1,55 @@
+Checking sequences: 
+n = 21, high Vtx = 4 7 7 7 
+n = 21, high Vtx = 6 6 6 7 
+n = 21, high Vtx = 5 6 7 7 
+Number of cores to check: 32133
+18:02:05
+total: 5642, under 1s: 5641, 1s–1min: 0, 1min-30min: 0, 30min+: 1
+18:32:23
+total: 11739, under 1s: 11705, 1s–1min: 23, 1min-30min: 10, 30min+: 1
+19:03:18
+total: 12861, under 1s: 12802, 1s–1min: 37, 1min-30min: 21, 30min+: 1
+19:34:03
+total: 12950, under 1s: 12881, 1s–1min: 39, 1min-30min: 29, 30min+: 1
+20:05:24
+total: 13125, under 1s: 13040, 1s–1min: 44, 1min-30min: 40, 30min+: 1
+20:37:25
+total: 13345, under 1s: 13251, 1s–1min: 46, 1min-30min: 47, 30min+: 1
+21:13:37
+total: 13455, under 1s: 13354, 1s–1min: 49, 1min-30min: 51, 30min+: 1
+21:43:47
+total: 14172, under 1s: 14055, 1s–1min: 52, 1min-30min: 64, 30min+: 1
+22:14:00
+total: 15018, under 1s: 14891, 1s–1min: 56, 1min-30min: 70, 30min+: 1
+22:47:29
+total: 17047, under 1s: 16909, 1s–1min: 59, 1min-30min: 78, 30min+: 1
+23:44:18
+total: 17677, under 1s: 17531, 1s–1min: 64, 1min-30min: 80, 30min+: 2
+00:17:26
+total: 17739, under 1s: 17586, 1s–1min: 69, 1min-30min: 82, 30min+: 2
+02:24:10
+total: 17768, under 1s: 17613, 1s–1min: 69, 1min-30min: 83, 30min+: 3
+03:01:52
+total: 17818, under 1s: 17661, 1s–1min: 69, 1min-30min: 84, 30min+: 4
+03:35:05
+total: 17819, under 1s: 17661, 1s–1min: 69, 1min-30min: 84, 30min+: 5
+08:33:55
+total: 17965, under 1s: 17796, 1s–1min: 74, 1min-30min: 89, 30min+: 6
+09:08:06
+total: 17966, under 1s: 17796, 1s–1min: 74, 1min-30min: 89, 30min+: 7
+10:10:54
+total: 18003, under 1s: 17830, 1s–1min: 75, 1min-30min: 90, 30min+: 8
+17:16:38
+total: 18021, under 1s: 17847, 1s–1min: 75, 1min-30min: 90, 30min+: 9
+17:47:56
+total: 18045, under 1s: 17865, 1s–1min: 75, 1min-30min: 96, 30min+: 9
+19:53:20
+total: 18076, under 1s: 17895, 1s–1min: 75, 1min-30min: 96, 30min+: 10
+22:05:00
+total: 18144, under 1s: 17961, 1s–1min: 75, 1min-30min: 97, 30min+: 11
+04:26:10
+total: 18159, under 1s: 17975, 1s–1min: 75, 1min-30min: 97, 30min+: 12
+06:07:28
+total: 18193, under 1s: 18007, 1s–1min: 75, 1min-30min: 98, 30min+: 13
+06:52:15
+total: 18312, under 1s: 18120, 1s–1min: 77, 1min-30min: 102, 30min+: 13
