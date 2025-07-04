@@ -4,3 +4,7 @@ n = 21, high Vtx = 8 9 9
 n = 21, high Vtx = 8 8 10 
 n = 21, high Vtx = 7 9 10 
 Number of cores to check: 1419
+18:09:54
+total: 1335, under 1s: 1332, 1s–1min: 0, 1min-30min: 2, 30min+: 1
+Finished checking
+

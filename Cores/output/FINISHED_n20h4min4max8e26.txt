@@ -4,3 +4,7 @@ n = 20, high Vtx = 5 5 8 8
 n = 20, high Vtx = 5 7 7 7 
 n = 20, high Vtx = 6 6 7 7 
 Number of cores to check: 92547
+17:46:38
+total: 91812, under 1s: 91788, 1s–1min: 17, 1min-30min: 7, 30min+: 0
+Finished checking
+

@@ -3,3 +3,17 @@ n = 21, high Vtx = 6 9 9
 n = 21, high Vtx = 7 8 9 
 n = 21, high Vtx = 8 8 8 
 Number of cores to check: 910
+19:19:12
+total: 628, under 1s: 627, 1s–1min: 0, 1min-30min: 0, 30min+: 1
+23:16:57
+total: 629, under 1s: 627, 1s–1min: 0, 1min-30min: 0, 30min+: 2
+08:23:52
+total: 639, under 1s: 636, 1s–1min: 0, 1min-30min: 0, 30min+: 3
+09:51:09
+total: 642, under 1s: 636, 1s–1min: 0, 1min-30min: 2, 30min+: 4
+19:47:33
+total: 766, under 1s: 750, 1s–1min: 2, 1min-30min: 9, 30min+: 5
+03:45:36
+total: 767, under 1s: 750, 1s–1min: 2, 1min-30min: 9, 30min+: 6
+07:25:26
+total: 768, under 1s: 750, 1s–1min: 2, 1min-30min: 9, 30min+: 7
