@@ -1,0 +1,29 @@
+Checking sequences: 
+n = 21, high Vtx = 4 5 5 5 5 5 
+Number of cores to check: 2260510
+00:05:15
+total: 313664, under 1s: 313648, 1s–1min: 16, 1min-30min: 0, 30min+: 0
+00:35:15
+total: 635551, under 1s: 635507, 1s–1min: 44, 1min-30min: 0, 30min+: 0
+01:05:16
+total: 809028, under 1s: 808771, 1s–1min: 257, 1min-30min: 0, 30min+: 0
+01:35:17
+total: 1074163, under 1s: 1073806, 1s–1min: 357, 1min-30min: 0, 30min+: 0
+02:05:17
+total: 1306419, under 1s: 1305937, 1s–1min: 482, 1min-30min: 0, 30min+: 0
+02:35:17
+total: 1444405, under 1s: 1443694, 1s–1min: 711, 1min-30min: 0, 30min+: 0
+03:05:22
+total: 1562241, under 1s: 1561223, 1s–1min: 1018, 1min-30min: 0, 30min+: 0
+03:35:23
+total: 1595294, under 1s: 1593741, 1s–1min: 1553, 1min-30min: 0, 30min+: 0
+04:05:23
+total: 1701386, under 1s: 1699517, 1s–1min: 1869, 1min-30min: 0, 30min+: 0
+04:35:23
+total: 1938138, under 1s: 1936158, 1s–1min: 1980, 1min-30min: 0, 30min+: 0
+05:05:23
+total: 2110504, under 1s: 2108304, 1s–1min: 2200, 1min-30min: 0, 30min+: 0
+05:35:23
+total: 2237471, under 1s: 2235097, 1s–1min: 2374, 1min-30min: 0, 30min+: 0
+Finished checking
+

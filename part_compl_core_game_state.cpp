@@ -200,7 +200,7 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
 
 set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileName) {
     string fileName = "temp//" + inFileName;
-    string command = "labelg -q " + fileName;
+    string command = "nauty-labelg -q " + fileName;
     ofstream outFile(fileName);
     if (!outFile) {
         throw runtime_error("labelCanonicalBatch: failed to open temp_input.g6 for writing");
