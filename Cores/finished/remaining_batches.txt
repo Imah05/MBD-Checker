@@ -1,4 +1,4 @@
-n21h3min6max9e24.txt >> runs at home
+n21h3min6max9e24.txt >> runs at home              //finished at Jakob's PC
 
 n21h4min4max7e25.txt >> runs at home
 n21h4min4max9e27.txt >> runs at home
