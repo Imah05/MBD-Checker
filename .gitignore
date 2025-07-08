@@ -3,6 +3,7 @@
 *.out
 *.exe
 output
+main 
 
 # Build directories
 build/

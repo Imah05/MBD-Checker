@@ -198,8 +198,10 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
 }
 
 
-set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileName) {
-    string fileName = "temp//" + inFileName;
+set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileName, int start, int end) {
+    stringstream ss;
+    ss << "temp//" << start << "_" << end << "_" << inFileName;
+    string fileName = ss.str();
     string command = "nauty-labelg -q " + fileName;
     ofstream outFile(fileName);
     if (!outFile) {
@@ -227,10 +229,10 @@ set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileNa
     return result;
 }
 
-bool PartComplCoreGameState::completionFilter(string inFileName) const {
+bool PartComplCoreGameState::completionFilter(string inFileName, int start, int end) const {
     vector<string> g6Vec = {toGraph6()};
     while(!g6Vec.empty()) {
-        set<string> g6Set = labelCanonicalBatch(g6Vec, inFileName);
+        set<string> g6Set = labelCanonicalBatch(g6Vec, inFileName, start, end);
         g6Vec.clear();
         int numberOfPCC;
         for (string g6 : g6Set) {
@@ -260,7 +262,7 @@ bool PartComplCoreGameState::completionFilter(string inFileName) const {
 }
 
 
-bool checkFile(const string& inFileName) {
+bool checkFile(const string& inFileName, int start, int end) {
     ifstream inFile("Cores//" + inFileName);
     if (!inFile) {
         cerr << "Error: Could not open " << "Cores//" << inFileName << endl;
@@ -295,7 +297,21 @@ bool checkFile(const string& inFileName) {
         cerr << "Error: No blank line separating header from graph6 data\n";
         return false;
     }
-    string outFileName = "Cores//output//" + inFileName;
+    stringstream outFileStream;
+    outFileStream << "Cores//output//";
+    if (end == -1 && start == 1) {
+        outFileStream << inFileName;
+    }
+    else {
+        outFileStream << inFileName.substr(0, inFileName.size() - 4) << "_" << start << "-"; 
+        if (end == -1)  {
+            outFileStream << "end"; 
+        }
+        else {
+            outFileStream << end;
+        }
+    }
+    string outFileName = outFileStream.str();
     ofstream outFile(outFileName);
     if (!outFile) {
         cerr << "Could not open " << outFileName << endl;
@@ -314,9 +330,18 @@ bool checkFile(const string& inFileName) {
     streampos graphsStartPos = inFile.tellg();
     int graphCount = 0;
     while (getline(inFile, line)) {
-        if (!line.empty()) ++graphCount;
+        if (!line.empty()) {
+            ++graphCount;
+        }
     }
-    outFile << "Number of cores to check: " << graphCount << endl;
+    outFile << "Checking cores " << start << "-";
+    if (end == -1) {
+        outFile << graphCount;
+    }
+    else {
+        outFile << end; 
+    }
+    outFile << " from a total of " << graphCount << endl;
     inFile.clear();
     inFile.seekg(graphsStartPos);
     
@@ -328,6 +353,13 @@ bool checkFile(const string& inFileName) {
             over30min = 0;
 
     while (getline(inFile, line)) {
+        if (totalCounter < start - 1) {
+            totalCounter++;
+            continue;
+        }
+        if (end != -1 && totalCounter >= end) {
+            break;
+        }
         auto t0 = steady_clock::now();
         if (t0 - startTime > maxDuration) {
             outFile << "time out: completionCheckDegSeq terminated" << endl << endl;
@@ -369,7 +401,7 @@ bool checkFile(const string& inFileName) {
             }
         }
         if (matchesAny) {
-            if (!pccgs.completionFilter(inFileName)) {
+            if (!pccgs.completionFilter(inFileName, start, end)) {
                 return false; 
             }
         }
@@ -384,7 +416,7 @@ bool checkFile(const string& inFileName) {
     }
     inFile.close();
     outFile << "Finished checking" << endl << endl;
-    rename(outFileName.c_str(), ("Cores//output//FINISHED_" + inFileName).c_str());
+    //rename(outFileName.c_str(), ("Cores//output//FINISHED_" + inFileName).c_str());
     outFile.close();
     return true; 
 }

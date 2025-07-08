@@ -134,3 +134,73 @@ total: 188662, under 1s: 188020, 1s–1min: 350, 1min-30min: 277, 30min+: 15
 total: 188746, under 1s: 188103, 1s–1min: 350, 1min-30min: 277, 30min+: 16
 12:31:13
 total: 188747, under 1s: 188103, 1s–1min: 350, 1min-30min: 277, 30min+: 17
+13:07:30
+total: 188880, under 1s: 188234, 1s–1min: 350, 1min-30min: 279, 30min+: 17
+14:06:26
+total: 189059, under 1s: 188412, 1s–1min: 350, 1min-30min: 279, 30min+: 18
+15:24:07
+total: 189061, under 1s: 188412, 1s–1min: 350, 1min-30min: 280, 30min+: 19
+16:28:58
+total: 192434, under 1s: 191779, 1s–1min: 352, 1min-30min: 283, 30min+: 20
+17:57:03
+total: 192814, under 1s: 192158, 1s–1min: 352, 1min-30min: 283, 30min+: 21
+18:34:40
+total: 194483, under 1s: 193822, 1s–1min: 353, 1min-30min: 287, 30min+: 21
+19:15:28
+total: 195254, under 1s: 194589, 1s–1min: 355, 1min-30min: 289, 30min+: 21
+19:53:42
+total: 195480, under 1s: 194811, 1s–1min: 355, 1min-30min: 293, 30min+: 21
+20:28:35
+total: 196387, under 1s: 195708, 1s–1min: 359, 1min-30min: 299, 30min+: 21
+21:18:14
+total: 196898, under 1s: 196205, 1s–1min: 364, 1min-30min: 308, 30min+: 21
+21:49:13
+total: 197015, under 1s: 196319, 1s–1min: 364, 1min-30min: 311, 30min+: 21
+22:33:31
+total: 197088, under 1s: 196388, 1s–1min: 364, 1min-30min: 315, 30min+: 21
+23:07:27
+total: 197138, under 1s: 196434, 1s–1min: 364, 1min-30min: 319, 30min+: 21
+00:21:17
+total: 197746, under 1s: 197035, 1s–1min: 368, 1min-30min: 321, 30min+: 22
+01:01:14
+total: 197843, under 1s: 197129, 1s–1min: 368, 1min-30min: 324, 30min+: 22
+01:46:54
+total: 197898, under 1s: 197181, 1s–1min: 368, 1min-30min: 327, 30min+: 22
+02:23:08
+total: 198574, under 1s: 197853, 1s–1min: 370, 1min-30min: 329, 30min+: 22
+03:22:06
+total: 199402, under 1s: 198679, 1s–1min: 371, 1min-30min: 329, 30min+: 23
+04:09:55
+total: 200749, under 1s: 200023, 1s–1min: 372, 1min-30min: 330, 30min+: 24
+04:43:56
+total: 200768, under 1s: 200040, 1s–1min: 372, 1min-30min: 332, 30min+: 24
+05:28:36
+total: 200812, under 1s: 200082, 1s–1min: 372, 1min-30min: 333, 30min+: 25
+05:59:07
+total: 200958, under 1s: 200221, 1s–1min: 375, 1min-30min: 337, 30min+: 25
+06:59:54
+total: 202081, under 1s: 201342, 1s–1min: 375, 1min-30min: 338, 30min+: 26
+07:32:25
+total: 204611, under 1s: 203849, 1s–1min: 385, 1min-30min: 351, 30min+: 26
+08:02:58
+total: 204776, under 1s: 204007, 1s–1min: 385, 1min-30min: 358, 30min+: 26
+08:34:40
+total: 209464, under 1s: 208682, 1s–1min: 391, 1min-30min: 365, 30min+: 26
+09:11:12
+total: 212449, under 1s: 211651, 1s–1min: 401, 1min-30min: 371, 30min+: 26
+09:43:07
+total: 212853, under 1s: 212052, 1s–1min: 401, 1min-30min: 374, 30min+: 26
+12:29:45
+total: 213159, under 1s: 212357, 1s–1min: 401, 1min-30min: 374, 30min+: 27
+15:10:55
+total: 213160, under 1s: 212357, 1s–1min: 401, 1min-30min: 374, 30min+: 28
+16:22:39
+total: 213397, under 1s: 212593, 1s–1min: 401, 1min-30min: 374, 30min+: 29
+17:49:01
+total: 218720, under 1s: 217913, 1s–1min: 401, 1min-30min: 376, 30min+: 30
+21:26:53
+total: 218894, under 1s: 218086, 1s–1min: 401, 1min-30min: 376, 30min+: 31
+22:05:22
+total: 218967, under 1s: 218158, 1s–1min: 401, 1min-30min: 376, 30min+: 32
+Finished checking
+

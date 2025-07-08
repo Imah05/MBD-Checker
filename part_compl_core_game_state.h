@@ -29,7 +29,7 @@ public:
 
     // returns true if Dominator wins on every completion of this and false
     // otherwise.
-    bool completionFilter(string inFileName) const;
+    bool completionFilter(string inFileName, int start, int end) const;
             
 private:
     // A vector of length getN() such that DVtx[i] is true if and only if the 
@@ -72,6 +72,6 @@ private:
 };
 
 
-bool checkFile(const string& inFileName);
+bool checkFile(const string& inFileName, int start = 1, int end = -1);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H
