@@ -2,6 +2,7 @@
 #define PART_COMPL_CORE_GAME_STATE_H
 
 #include "graph.h"
+#include <unordered_set>
 
 class PartComplCoreGameState : public Graph {
 public:
@@ -71,6 +72,7 @@ private:
     vector<int> remVtx;
 };
 
+unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec);
 
 bool checkFile(const string& inFileName, int start = 1, int end = -1);
 

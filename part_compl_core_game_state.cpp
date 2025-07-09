@@ -14,6 +14,16 @@
 #include <sstream>
 #include <cstdio>
 #include <thread>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <set>
+#include <sstream>
+#include <cstring>
+#include <iostream>
 
 using namespace std;
 using namespace std::chrono;
@@ -198,41 +208,122 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
 }
 
 
-set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileName, int start, int end) {
-    stringstream ss;
-    ss << "temp//" << start << "_" << end << "_" << inFileName;
-    string fileName = ss.str();
-    string command = "nauty-labelg -q " + fileName;
-    ofstream outFile(fileName);
-    if (!outFile) {
-        throw runtime_error("labelCanonicalBatch: failed to open temp_input.g6 for writing");
-    }
-    for (string g6 : graph6Vec) {
-        outFile << g6 << '\n';
-    }
-    outFile.close();
+// set<string> labelCanonicalBatch(const vector<string>& graph6Vec, string inFileName, int start, int end) {
+//     stringstream ss;
+//     ss << "temp//" << start << "_" << end << "_" << inFileName;
+//     string fileName = ss.str();
+//     string command = "nauty-labelg -q " + fileName;
+//     ofstream outFile(fileName);
+//     if (!outFile) {
+//         throw runtime_error("labelCanonicalBatch: failed to open temp_input.g6 for writing");
+//     }
+//     for (string g6 : graph6Vec) {
+//         outFile << g6 << '\n';
+//     }
+//     outFile.close();
     
-    FILE* fp = popen(command.c_str(), "r");
-    if (!fp) {
-        throw runtime_error("labelCanonicalBatch: popen failed");
+//     FILE* fp = popen(command.c_str(), "r");
+//     if (!fp) {
+//         throw runtime_error("labelCanonicalBatch: popen failed");
+//     }
+//     set<string> result;
+//     char buff[100];
+//     while (fgets(buff, sizeof(buff), fp)) {
+//         buff[strcspn(buff, "\n")] = 0;
+//         result.insert(string(buff));
+//     }
+//     pclose(fp);
+//     if (remove(fileName.c_str()) != 0) {
+//         cerr << ("Error deleting temporary file");
+//     }
+//     return result;
+// }
+
+
+unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
+    int inPipe[2];   // Parent writes to child
+    int outPipe[2];  // Parent reads from child
+
+    if (pipe(inPipe) == -1 || pipe(outPipe) == -1) {
+        throw runtime_error("pipe failed");
     }
-    set<string> result;
-    char buff[100];
-    while (fgets(buff, sizeof(buff), fp)) {
-        buff[strcspn(buff, "\n")] = 0;
-        result.insert(string(buff));
+
+    pid_t pid = fork();
+    if (pid < 0) {
+        throw runtime_error("fork failed");
+    } else if (pid == 0) {
+        // Child process
+
+        // Redirect stdin to read from inPipe[0]
+        dup2(inPipe[0], STDIN_FILENO);
+        // Redirect stdout to write to outPipe[1]
+        dup2(outPipe[1], STDOUT_FILENO);
+
+        // Close unused pipe ends
+        close(inPipe[0]);
+        close(inPipe[1]);
+        close(outPipe[0]);
+        close(outPipe[1]);
+
+        // Execute labelg
+        execlp("nauty-labelg", "nauty-labelg", "-q", nullptr);
+
+        // If execlp fails
+        perror("execlp failed");
+        _exit(1);
     }
-    pclose(fp);
-    if (remove(fileName.c_str()) != 0) {
-        cerr << ("Error deleting temporary file");
+
+    // Parent process
+
+    // Close unused pipe ends
+    close(inPipe[0]);
+    close(outPipe[1]);
+
+    // Write to child's stdin
+    for (const string& g6 : graph6Vec) {
+        string line = g6 + "\n";
+        write(inPipe[1], line.c_str(), line.size());
     }
+    close(inPipe[1]); // Close write end to signal EOF
+
+    // Read from child's stdout
+    unordered_set<string> result;
+    char buffer[256];
+    string partial;
+
+    while (true) {
+        ssize_t count = read(outPipe[0], buffer, sizeof(buffer));
+        if (count == -1) {
+            throw runtime_error("read failed");
+        } else if (count == 0) {
+            break; // EOF
+        } else {
+            partial.append(buffer, count);
+            size_t pos = 0;
+            while ((pos = partial.find('\n')) != string::npos) {
+                string line = partial.substr(0, pos);
+                result.insert(line);
+                partial.erase(0, pos + 1);
+            }
+        }
+    }
+
+    close(outPipe[0]);
+
+    int status;
+    waitpid(pid, &status, 0);
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+        throw runtime_error("labelg process failed");
+    }
+
     return result;
 }
 
 bool PartComplCoreGameState::completionFilter(string inFileName, int start, int end) const {
     vector<string> g6Vec = {toGraph6()};
     while(!g6Vec.empty()) {
-        set<string> g6Set = labelCanonicalBatch(g6Vec, inFileName, start, end);
+        // set<string> g6Set = labelCanonicalBatch(g6Vec, inFileName, start, end);
+        unordered_set<string> g6Set = labelCanonicalBatch(g6Vec);
         g6Vec.clear();
         int numberOfPCC;
         for (string g6 : g6Set) {
@@ -402,6 +493,7 @@ bool checkFile(const string& inFileName, int start, int end) {
         }
         if (matchesAny) {
             if (!pccgs.completionFilter(inFileName, start, end)) {
+                outFile << "Counterexample found: " << line;
                 return false; 
             }
         }
