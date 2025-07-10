@@ -24,6 +24,8 @@
 #include <sstream>
 #include <cstring>
 #include <iostream>
+#include <thread>
+
 
 using namespace std;
 using namespace std::chrono;
@@ -240,75 +242,57 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
 // }
 
 
-unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
-    int inPipe[2];   // Parent writes to child
-    int outPipe[2];  // Parent reads from child
+#include <thread>
+// ... other includes
 
+unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
+    int inPipe[2];
+    int outPipe[2];
     if (pipe(inPipe) == -1 || pipe(outPipe) == -1) {
         throw runtime_error("pipe failed");
     }
 
     pid_t pid = fork();
-    if (pid < 0) {
-        throw runtime_error("fork failed");
-    } else if (pid == 0) {
-        // Child process
+    if (pid < 0) throw runtime_error("fork failed");
 
-        // Redirect stdin to read from inPipe[0]
+    if (pid == 0) {
+        // Child
         dup2(inPipe[0], STDIN_FILENO);
-        // Redirect stdout to write to outPipe[1]
         dup2(outPipe[1], STDOUT_FILENO);
-
-        // Close unused pipe ends
-        close(inPipe[0]);
-        close(inPipe[1]);
-        close(outPipe[0]);
-        close(outPipe[1]);
-
-        // Execute labelg
+        close(inPipe[0]); close(inPipe[1]);
+        close(outPipe[0]); close(outPipe[1]);
         execlp("nauty-labelg", "nauty-labelg", "-q", nullptr);
-
-        // If execlp fails
-        perror("execlp failed");
         _exit(1);
     }
 
-    // Parent process
-
-    // Close unused pipe ends
+    // Parent
     close(inPipe[0]);
     close(outPipe[1]);
 
-    // Write to child's stdin
-    for (const string& g6 : graph6Vec) {
-        string line = g6 + "\n";
-        write(inPipe[1], line.c_str(), line.size());
-    }
-    close(inPipe[1]); // Close write end to signal EOF
+    // Thread to write input
+    thread writerThread([&]() {
+        for (const string& g6 : graph6Vec) {
+            write(inPipe[1], g6.c_str(), g6.size());
+            write(inPipe[1], "\n", 1);
+        }
+        close(inPipe[1]); // signal EOF
+    });
 
-    // Read from child's stdout
+    // Main thread reads output
     unordered_set<string> result;
     char buffer[256];
     string partial;
-
-    while (true) {
-        ssize_t count = read(outPipe[0], buffer, sizeof(buffer));
-        if (count == -1) {
-            throw runtime_error("read failed");
-        } else if (count == 0) {
-            break; // EOF
-        } else {
-            partial.append(buffer, count);
-            size_t pos = 0;
-            while ((pos = partial.find('\n')) != string::npos) {
-                string line = partial.substr(0, pos);
-                result.insert(line);
-                partial.erase(0, pos + 1);
-            }
+    ssize_t count;
+    while ((count = read(outPipe[0], buffer, sizeof(buffer))) > 0) {
+        partial.append(buffer, count);
+        size_t pos;
+        while ((pos = partial.find('\n')) != string::npos) {
+            result.insert(partial.substr(0, pos));
+            partial.erase(0, pos + 1);
         }
     }
-
     close(outPipe[0]);
+    writerThread.join();
 
     int status;
     waitpid(pid, &status, 0);
@@ -318,6 +302,7 @@ unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
 
     return result;
 }
+
 
 bool PartComplCoreGameState::completionFilter(string inFileName, int start, int end) const {
     vector<string> g6Vec = {toGraph6()};
