@@ -7,7 +7,7 @@
 using namespace std;
 
 int main(int argc, const char *argv[]) {
-    loadDegSequences();
+    loadInputSequences();
     string graph6;
     clock_t c_start = clock();
     int counter = 0;
@@ -25,4 +25,3 @@ int main(int argc, const char *argv[]) {
     cerr << ">Z " << counter << " cores checked in " << time << " sec" << endl;
     return 0;
 }
-

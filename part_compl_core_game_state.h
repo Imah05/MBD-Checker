@@ -4,6 +4,10 @@
 #include "graph.h"
 #include <unordered_set>
 
+extern vector<vector<int>> inputDegSequences;
+
+void loadInputSequences(const string& filename = "input_sequences.txt");
+
 class PartComplCoreGameState : public Graph {
 public:
     // Creates a game state on a partially completed core represented by a 
@@ -30,7 +34,7 @@ public:
 
     // returns true if Dominator wins on every completion of this and false
     // otherwise.
-    bool completionFilter(string inFileName, int start, int end) const;
+    bool completionFilter() const;
             
 private:
     // A vector of length getN() such that DVtx[i] is true if and only if the 
@@ -74,6 +78,8 @@ private:
 
 unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec);
 
-bool checkFile(const string& inFileName, int start = 1, int end = -1);
+bool completionFilter(const string&);
+
+// bool checkFile(const string& inFileName, int start = 1, int end = -1);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H
