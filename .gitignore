@@ -4,6 +4,7 @@
 *.exe
 output
 main 
+check_cores
 
 # Build directories
 build/

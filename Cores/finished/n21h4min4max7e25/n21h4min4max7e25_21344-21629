@@ -1,0 +1,9 @@
+Checking sequences: 
+n = 21, high Vtx = 4 7 7 7 
+n = 21, high Vtx = 6 6 6 7 
+n = 21, high Vtx = 5 6 7 7 
+Checking cores 21344-21629 from a total of 32133
+18:03:22
+total: 21432, under 1s: 86, 1s–1min: 0, 1min-30min: 2, 30min+: 1
+Finished checking
+
