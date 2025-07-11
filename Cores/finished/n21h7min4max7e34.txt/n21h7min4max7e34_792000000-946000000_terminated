@@ -1,0 +1,94 @@
+Checking sequences: 
+n = 21, high Vtx = 4 4 4 4 4 7 7 
+n = 21, high Vtx = 4 5 5 5 5 5 5 
+n = 21, high Vtx = 4 4 4 5 5 6 6 
+n = 21, high Vtx = 4 4 4 4 6 6 6 
+Checking cores 792000000-946000000 from a total of 1098653962
+10:20:32
+total: 793466668, under 1s: 1466669, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+10:50:32
+total: 795094615, under 1s: 3094616, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+11:20:32
+total: 796672227, under 1s: 4672228, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+11:50:32
+total: 798135537, under 1s: 6135538, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+12:20:32
+total: 799687206, under 1s: 7687207, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+12:50:32
+total: 801307529, under 1s: 9307530, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+13:20:32
+total: 802909391, under 1s: 10909392, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+13:50:32
+total: 804591947, under 1s: 12591948, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+14:20:32
+total: 806287019, under 1s: 14287020, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+14:50:32
+total: 808005349, under 1s: 16005350, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+15:20:32
+total: 809670597, under 1s: 17670598, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+15:50:32
+total: 811415275, under 1s: 19415276, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+16:20:32
+total: 813131268, under 1s: 21131269, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+16:50:32
+total: 814785688, under 1s: 22785689, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+17:20:32
+total: 816462247, under 1s: 24462248, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+17:50:32
+total: 818174252, under 1s: 26174253, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+18:20:32
+total: 819875625, under 1s: 27875626, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+18:50:32
+total: 821657895, under 1s: 29657896, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+19:20:32
+total: 823435400, under 1s: 31435401, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+19:50:32
+total: 825182334, under 1s: 33182335, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+20:20:32
+total: 826947629, under 1s: 34947630, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+20:50:32
+total: 828658569, under 1s: 36658570, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+21:20:32
+total: 830362433, under 1s: 38362434, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+21:50:32
+total: 832099355, under 1s: 40099356, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+22:20:32
+total: 833803881, under 1s: 41803882, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+22:50:32
+total: 835470759, under 1s: 43470760, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+23:20:32
+total: 837170668, under 1s: 45170669, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+23:50:32
+total: 838886194, under 1s: 46886195, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+00:20:32
+total: 840582846, under 1s: 48582847, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+00:50:32
+total: 842209015, under 1s: 50209016, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+01:20:32
+total: 843873776, under 1s: 51873777, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+01:50:32
+total: 845533800, under 1s: 53533801, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+02:20:32
+total: 847337212, under 1s: 55337213, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+02:50:32
+total: 849090859, under 1s: 57090860, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+03:20:32
+total: 850896736, under 1s: 58896737, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+03:50:32
+total: 852769266, under 1s: 60769267, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+04:20:32
+total: 854557418, under 1s: 62557419, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+04:50:32
+total: 856341200, under 1s: 64341201, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+05:20:32
+total: 858159780, under 1s: 66159781, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+05:50:32
+total: 859900483, under 1s: 67900484, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+06:20:32
+total: 861565225, under 1s: 69565226, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+06:50:32
+total: 863234761, under 1s: 71234762, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+07:20:32
+total: 864894804, under 1s: 72894805, 1s–1min: 0, 1min-30min: 0, 30min+: 0
+07:50:32
+total: 866679305, under 1s: 74679306, 1s–1min: 0, 1min-30min: 0, 30min+: 0
