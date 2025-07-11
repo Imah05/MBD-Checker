@@ -6,8 +6,8 @@
 
 using namespace std;
 
-int main(int argc, const char *argv[]) {
-    loadDegSequences();
+int main() {
+    loadInputSequences();
     string graph6;
     clock_t c_start = clock();
     int counter = 0;
