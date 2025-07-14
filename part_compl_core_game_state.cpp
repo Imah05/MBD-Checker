@@ -288,7 +288,7 @@ unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
     int status;
     waitpid(pid, &status, 0);
     if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-        throw runtime_error("labelg process failed");
+        throw runtime_error("nauty-labelg process failed");
     }
 
     return result;
