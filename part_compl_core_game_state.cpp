@@ -176,6 +176,7 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
             nextCoreGS.DVtx[i] = false;
         }
         if (out != -2) {
+            // return lowDegVtx[0];
             return out;
         }
         else if (lowDegVtx.size() > 0) {
@@ -214,6 +215,7 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
                 ++j;
             }
             if (missingEdges == 0 && newTotalPot >= 1) {
+                // return lowDegVtx[0];
                 return i;
             }
         }
@@ -228,6 +230,8 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
         }
         return -1;
     }
+    // unreachable return 
+    return -3;
 }
 
 unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {

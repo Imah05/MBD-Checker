@@ -4,8 +4,13 @@
 #include "graph.h"
 #include <unordered_set>
 
+// A vector containing all the degree sequences of the graphs we want to check.
 extern vector<vector<int>> inputDegSequences;
 
+// Loads the degree sequences from the input file filename to inputDegSequences. 
+// Expects the degree sequences in filename to come in separate lines, where 
+// each line contains an increasingly sorted sequence of integers separated by 
+// whitespaces.
 void loadInputSequences(const string& filename = "input_sequences.txt");
 
 class PartComplCoreGameState : public Graph {
@@ -15,13 +20,14 @@ public:
     PartComplCoreGameState(const string& graph6);
 
     // Updates the vectors gameStateDeg, pot, lowDegVtx and remVtx as well as the double 
-    // totalPot so that they satisfy their conditions as described below. The 
+    // totalPot so that they match their description from below. The 
     // graph itself as well as the vertices claimed by the two players, that is
     // the two vectors DVtx and SVtx remain unchanged.
     void update();
 
     // Adds the edge uv to the underlying graph.
     void addEdge(int u, int v);
+    
     // Removes the edge uv to the underlying graph.
     void removeEdge(int u, int v);
 
