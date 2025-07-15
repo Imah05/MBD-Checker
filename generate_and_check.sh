@@ -58,7 +58,6 @@ run_job() {
 
 
 for cmd in "${arr[@]}"; do
-    start=$(date +%s)
     echo "=== Running: $cmd"
     cmd_name=$(echo "$cmd" | tr ' /' '__')
     for i in $(seq 0 $((n-1))); do
@@ -68,16 +67,38 @@ for cmd in "${arr[@]}"; do
             sleep 0.2
         done
     done
+done
 
-    while [ "$(jobs -rp | wc -l)" -gt 0 ]; do
-        sleep 0.2
-    done
-    end=$(date +%s)
+while [ "$(jobs -rp | wc -l)" -gt 0 ]; do
+    sleep 0.2
+done
+
+for cmd in "${arr[@]}"; do
     logfile="logs/log_${cmd_name}.txt"
-    printf "===Total Time: %d sec\n\n" $((end - start)) > "$logfile"
+    
+    total_graphs_nauty=0
+    total_graphs_compl=0
+    total_time=0
+
     for j in $(seq 0 $((n-1))); do
-        cat tmp/tmp_${cmd_name}_$j.log >> "$logfile"
-        rm tmp/tmp_${cmd_name}_$j.log
+        log_file="tmp/tmp_${cmd_name}_$j.log"
+
+        graphs_nauty=$(grep '^>Z' "$log_file" | awk '{print $2}')
+        graphs_compl=$(grep '^>F' "$log_file" | awk '{print $2}')
+        time_nauty=$(grep '^>Z' "$log_file" | awk '{print $6}')
+        time_compl=$(grep '^>F' "$log_file" | awk '{print $6}')
+
+        total_graphs_nauty=$((total_graphs_nauty + graphs_nauty))
+        total_graphs_compl=$((total_graphs_compl + graphs_compl))
+        total_time=$(echo "$total_time + $time_nauty + $time_compl" | bc)
+
+        cat "$log_file" >> "$logfile"
+        rm "$log_file"
     done
-    echo "=== Done: total time $((end - start)) sec"
+
+    echo -e "\n\n" >> "$logfile"
+
+    echo "===Total number of cores generated: $total_graphs_nauty" >> "$logfile"
+    echo "===Total number of cores checked: $total_graphs_compl" >> "$logfile"
+    echo "===Total time: $total_time seconds" >> "$logfile"
 done
