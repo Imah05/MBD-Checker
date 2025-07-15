@@ -1,6 +1,5 @@
 #include "part_compl_core_game_state.h"
 #include <iostream>
-#include <list>
 #include <utility>
 #include <algorithm>
 #include <stdexcept>
@@ -13,17 +12,9 @@
 #include <numeric>
 #include <sstream>
 #include <cstdio>
-#include <thread>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <stdexcept>
-#include <string>
-#include <vector>
-#include <set>
-#include <sstream>
-#include <cstring>
-#include <iostream>
 #include <thread>
 
 
@@ -31,12 +22,6 @@ using namespace std;
 using namespace std::chrono;
 
 vector<vector<int>> inputDegSequences;
-
-PartComplCoreGameState::PartComplCoreGameState(const string& graph6) : 
-                            Graph(graph6), DVtx(vector<bool>(getN(), false)), 
-                            SVtx(vector<bool>(getN(), false)) {
-    update();
-}
 
 void loadInputSequences(const string& filename) {
     ifstream infile(filename);
@@ -57,6 +42,12 @@ void loadInputSequences(const string& filename) {
     }
 }
 
+PartComplCoreGameState::PartComplCoreGameState(const string& graph6) : 
+                            Graph(graph6), DVtx(vector<bool>(getN(), false)), 
+                            SVtx(vector<bool>(getN(), false)) {
+    update();
+}
+
 void PartComplCoreGameState::update() {
     int n = getN();
     totalPot = 0.;
@@ -65,7 +56,8 @@ void PartComplCoreGameState::update() {
     gameStateDeg.assign(n, 0);
     pot.assign(n, 0.);
 
-    // set gameStateDeg[i] = -1 for dominated vertices i
+    // set gameStateDeg[i] = -1 for vertices i claimed by Dominator or adjacent
+    // to a vertex claimed by Dominator
     for (int i = 0; i < n; ++i) {
         if (DVtx[i]) {
             gameStateDeg[i] = -1;
@@ -75,7 +67,7 @@ void PartComplCoreGameState::update() {
         }
     }
 
-    // determine gameStateDeg[i] for undominated vertices i
+    // determine gameStateDeg[i] for all other vertices i
     for (int i = 0; i < n; ++i) {
         if (gameStateDeg[i] != -1) {
             if (!SVtx[i]) {
@@ -155,7 +147,6 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
             return -2;
         }
     }
-
     if (firstPlayer == 'D') {
         if (totalPot < 1) {
             return -1;
@@ -294,7 +285,6 @@ unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
     if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
         throw runtime_error("nauty-labelg process failed");
     }
-
     return result;
 }
 
@@ -303,9 +293,7 @@ bool PartComplCoreGameState::completionFilter() const {
     vector<string> g6Vec = {toGraph6()};
     while(!g6Vec.empty()) {
         unordered_set<string> g6Set = labelCanonicalBatch(g6Vec);
-        // unordered_set<string> g6Set = labelCanonicalBatch(g6Vec);
         g6Vec.clear();
-        int numberOfPCC;
         for (string g6 : g6Set) {
             PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
             int a = coreGs.outcome('D');
@@ -318,25 +306,21 @@ bool PartComplCoreGameState::completionFilter() const {
             PartComplCoreGameState newCoreGS(coreGs);
             for (int b : coreGs.lowDegVtx) {
                 if (!coreGs.hasEdge(a, b) && b != a) {
-                    if (coreGs.deg(a) > 3 || coreGs.deg(b) > 3) {
-                        cout << "Hilfe!!!" << endl;
-                    }
                     newCoreGS.addEdge(a, b);
                     g6Vec.push_back(newCoreGS.toGraph6());
                     newCoreGS.removeEdge(a, b);
                 }
             }
         }
-        numberOfPCC = g6Set.size();
     }
     return true;
 }
 
 bool completionFilter(const string& graph6) {
-    PartComplCoreGameState pccgs(graph6);
+    PartComplCoreGameState pcc(graph6);
     vector<int> degSeq;
-    for (int i = 0; i < pccgs.getN(); ++i) {
-        int deg = pccgs.deg(i);
+    for (int i = 0; i < pcc.getN(); ++i) {
+        int deg = pcc.deg(i);
         if (deg <= 3) {
             degSeq.push_back(3);
         }
@@ -348,169 +332,8 @@ bool completionFilter(const string& graph6) {
 
     for (vector<int> curDegSeq : inputDegSequences) {
         if (curDegSeq == degSeq) {
-            return pccgs.completionFilter();
+            return pcc.completionFilter();
         }
     }
     return true;
 }
-
-
-// bool checkFile(const string& inFileName, int start, int end) {
-//     ifstream inFile("Cores//" + inFileName);
-//     if (!inFile) {
-//         cerr << "Error: Could not open " << "Cores//" << inFileName << endl;
-//         return false;
-//     }
-
-//     vector<vector<int>> seqs;
-//     string line;
-//     bool readingSeq = true;
-//     int n;
-
-//     while (getline(inFile, line)) {
-//         if (line.empty()) {
-//             readingSeq = false;
-//             break;
-//         }
-//         istringstream iss(line);
-//         vector<int> seq;
-//         int val;
-//         n = 0;
-//         while (iss >> val) {
-//             if (val > 3) {
-//                 seq.push_back(val);
-//             }
-//             n++;
-//         }
-//         sort(seq.begin(), seq.end());
-//         seqs.push_back(move(seq));
-//     }
-
-//     if (readingSeq) {
-//         cerr << "Error: No blank line separating header from graph6 data\n";
-//         return false;
-//     }
-//     stringstream outFileStream;
-//     outFileStream << "Cores//output//";
-//     if (end == -1 && start == 1) {
-//         outFileStream << inFileName;
-//     }
-//     else {
-//         outFileStream << inFileName.substr(0, inFileName.size() - 4) << "_" << start << "-"; 
-//         if (end == -1)  {
-//             outFileStream << "end"; 
-//         }
-//         else {
-//             outFileStream << end;
-//         }
-//     }
-//     string outFileName = outFileStream.str();
-//     ofstream outFile(outFileName);
-//     if (!outFile) {
-//         cerr << "Could not open " << outFileName << endl;
-//         return false;
-//     }
-
-//     outFile << "Checking sequences: " << endl;
-//     for (vector<int> seq : seqs) {
-//         outFile << "n = " << n << ", high Vtx = ";
-//         for (int i : seq) {
-//             outFile << i << " ";
-//         }
-//         outFile << endl;
-//     }
-
-//     streampos graphsStartPos = inFile.tellg();
-//     int graphCount = 0;
-//     while (getline(inFile, line)) {
-//         if (!line.empty()) {
-//             ++graphCount;
-//         }
-//     }
-//     outFile << "Checking cores " << start << "-";
-//     if (end == -1) {
-//         outFile << graphCount;
-//     }
-//     else {
-//         outFile << end; 
-//     }
-//     outFile << " from a total of " << graphCount << endl;
-//     inFile.clear();
-//     inFile.seekg(graphsStartPos);
-    
-//     auto startTime = steady_clock::now();
-//     auto lastReport = startTime;
-//     const auto maxDuration = minutes(6000);
-//     const auto reportInterval = minutes(30);
-//     int totalCounter = 0, under1s = 0, under1min = 0, under30min = 0,
-//             over30min = 0;
-
-//     while (getline(inFile, line)) {
-//         if (totalCounter < start - 1) {
-//             totalCounter++;
-//             continue;
-//         }
-//         if (end != -1 && totalCounter >= end) {
-//             break;
-//         }
-//         auto t0 = steady_clock::now();
-//         if (t0 - startTime > maxDuration) {
-//             outFile << "time out: completionCheckDegSeq terminated" << endl << endl;
-//             return false;
-//         }
-//         auto now = system_clock::now();
-//         time_t now_time = system_clock::to_time_t(now);
-//         tm local_tm = *localtime(&now_time);
-//         if (t0 - lastReport >= reportInterval) {
-//             outFile << put_time(&local_tm, "%H:%M:%S") << endl
-//                  << "total: " << totalCounter 
-//                  << ", under 1s: " << under1s
-//                  << ", 1s–1min: " << under1min
-//                  << ", 1min-30min: " << under30min
-//                  << ", 30min+: " << over30min
-//                  << endl;
-//             lastReport = t0;
-//         }
-
-//         if (line.empty()) {
-//             continue;
-//         }
-
-//         PartComplCoreGameState pccgs(line);
-//         vector<int> curSeq;
-//         for (int i = 0; i < pccgs.getN(); ++i) {
-//             int deg = pccgs.deg(i);
-//             if (deg > 3) {
-//                 curSeq.push_back(deg);
-//             }
-//         }
-//         sort(curSeq.begin(), curSeq.end());
-
-//         bool matchesAny = false;
-//         for (vector<int> seq : seqs) {
-//             if (seq == curSeq) {
-//                 matchesAny = true;
-//                 break;
-//             }
-//         }
-//         if (matchesAny) {
-//             if (!pccgs.completionFilter()) {
-//                 outFile << "Counterexample found: " << line;
-//                 return false; 
-//             }
-//         }
-//         auto t1 = steady_clock::now();
-//         auto durMs = duration_cast<seconds>(t1 - t0).count();
-
-//         ++totalCounter;
-//         if (durMs < 1) ++under1s;
-//         else if (durMs < 60) ++under1min;
-//         else if (durMs < 1800) ++under30min;
-//         else ++over30min;
-//     }
-//     inFile.close();
-//     outFile << "Finished checking" << endl << endl;
-//     //rename(outFileName.c_str(), ("Cores//output//FINISHED_" + inFileName).c_str());
-//     outFile.close();
-//     return true; 
-// }
