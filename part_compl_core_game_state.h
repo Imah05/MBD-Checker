@@ -9,8 +9,8 @@ extern vector<vector<int>> inputDegSequences;
 
 // Loads the degree sequences from the input file filename to inputDegSequences. 
 // Expects the degree sequences in filename to come in separate lines, where 
-// each line contains an increasingly sorted sequence of integers separated by 
-// whitespaces.
+// each line contains an increasingly sorted sequence of non-negative integers 
+// separated by whitespaces.
 void loadInputSequences(const string& filename = "input_sequences.txt");
 
 class PartComplCoreGameState : public Graph {
@@ -19,27 +19,30 @@ public:
     // graph6 string, in which all the vertices are unclaimed. 
     PartComplCoreGameState(const string& graph6);
 
-    // Updates the vectors gameStateDeg, pot, lowDegVtx and remVtx as well as the double 
-    // totalPot so that they match their description from below. The 
+    // Updates the vectors gameStateDeg, pot, lowDegVtx and remVtx as well as 
+    // the double totalPot so that they match their description from below. The 
     // graph itself as well as the vertices claimed by the two players, that is
-    // the two vectors DVtx and SVtx remain unchanged.
+    // the two vectors DVtx and SVtx, remain unchanged.
     void update();
 
-    // Adds the edge uv to the underlying graph.
+    // Adds the edge uv to the underlying graph. 
     void addEdge(int u, int v);
     
-    // Removes the edge uv to the underlying graph.
+    // Removes the edge uv from the underlying graph if it exists.
     void removeEdge(int u, int v);
 
-    // returns -1 if Dominator wins on every completion of this half completed core
-    // returns the low deg vtx v if we do not a priori know that Dominator 
-    // wins and where v is a 'dangerous' vertex we want to use first when 
-    // completing this halfcompleted core
-    // returns -2 if Staller wins on a completion of this. 
+    // If it returns -1 then Dominator wins on every completion of this 
+    // partially completed core game state, where firstPlayer starts the game.
+    // If it returns -2 then Staller wins on some completion of this partially 
+    // completed core game state, where firstPlayer starts the game.
+    // If it returns neither -1 nor -2 it returns a low degree vertex (which we
+    // want to use first for completion).
     int outcome(char firstPlayer) const;
 
-    // returns true if Dominator wins on every completion of this and false
-    // otherwise.
+    // Returns true if and only if Dominator wins on every completion of this 
+    // partially completed core game going first and false otherwise. The game 
+    // state on this partially completed core is ignored and all vertices are 
+    // assumed to be unclaimed. 
     bool completionFilter() const;
             
 private:
@@ -55,8 +58,9 @@ private:
 
     // A vector of length getN() with the following property. If the vertex i is 
     // claimed by Dominator or adjacent to a vertex claimed by Dominator, then 
-    // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is the number of unclaimed vertices in the closed neighborhood of 
-    // i (the neighborhood of i including i itself).
+    // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is the number of 
+    // unclaimed vertices in the closed neighborhood of i (the neighborhood of i
+    // including i itself).
     vector<int> gameStateDeg;
 
     // A vector containing all the vertices of the underlying graph, that have 
@@ -75,17 +79,22 @@ private:
     // vertices j, pot[j] is undefined and can be anything.
     vector<double> pot;
 
-    // totalPot is the total ES potential in any completion of this.
+    // totalPot is the total ES potential of any completion of this partially 
+    // completed core game state.
     double totalPot;
     
-    // A vector containing all unlcaimed vertices of degree at least 3. 
+    // A vector containing all unclaimed vertices of degree at least 3.
     vector<int> remVtx;
 };
 
+// Returns an unordered_set containing the canonically labeled graph6 strings 
+// of all the graph6 strings in the input vector by calling nauty's labelg
 unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec);
 
-bool completionFilter(const string&);
-
-// bool checkFile(const string& inFileName, int start = 1, int end = -1);
+// Requires the graph G corresponding to the input graph6 string to be a core. 
+// If the degree sequence of every completion of G occurs in inputDegSequences 
+// and Dominator wins on every completion of G it returns true. Otherwise it 
+// returns false.
+bool completionFilter(const string& graph6);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H
