@@ -37,11 +37,8 @@ arr=(
 "nauty-genbg -d4:0 -D7:3 7 14 34:34"
 "nauty-genbg -d4:0 -D7:3 7 14 36:36"
 "nauty-genbg -d4:0 -D5:3 8 13 35:35" 
+"nauty-genbg -d4:0 -D6:3 8 13 37:37"
 )
-
-
-k=$(nproc)
-[ "$k" -gt 1 ] && k=$((k - 1))
 
 n=1000
 
@@ -63,7 +60,7 @@ for cmd in "${arr[@]}"; do
     for i in $(seq 0 $((n-1))); do
         run_job "$cmd" "$i" &
 
-        while [ "$(jobs -rp | wc -l)" -ge "$k" ]; do
+        while [ "$(echo "$(mpstat 1 1 | awk '/Average/ {print 100 - $NF}')" ">" "90" | bc)" -eq 1 ]; do
             sleep 0.2
         done
     done
@@ -74,6 +71,7 @@ while [ "$(jobs -rp | wc -l)" -gt 0 ]; do
 done
 
 for cmd in "${arr[@]}"; do
+    cmd_name=$(echo "$cmd" | tr ' /' '__')
     logfile="logs/log_${cmd_name}.txt"
     
     total_graphs_nauty=0
@@ -102,3 +100,6 @@ for cmd in "${arr[@]}"; do
     echo "===Total number of cores checked: $total_graphs_compl" >> "$logfile"
     echo "===Total time: $total_time seconds" >> "$logfile"
 done
+
+rm -rf tmp
+echo "=== All jobs completed. Logs are saved in the 'logs' directory."

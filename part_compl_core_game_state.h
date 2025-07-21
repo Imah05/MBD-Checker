@@ -59,29 +59,30 @@ private:
     // A vector of length getN() with the following property. If the vertex i is 
     // claimed by Dominator or adjacent to a vertex claimed by Dominator, then 
     // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is the number of 
-    // unclaimed vertices in the closed neighborhood of i (the neighborhood of i
-    // including i itself).
+    // unclaimed vertices in the closed neighborhood of i in any completion of 
+    // this partially completed core game state. Here the closed neighborhood is
+    // the set of vertices adjacent to i together with i itself.
     vector<int> gameStateDeg;
 
     // A vector containing all the vertices of the underlying graph, that have 
     // degree strictly less than three, ordered such that for two vertices i and
     // j of degree at most 2 it holds that
     // - if gameStateDeg[i] != -1 and gameStateDeg[j] = -1, then i preceeds j,
-    // - if -1 < gameStateDeg[i] < gameStateDeg[j] then i preceeds j,
-    // - if gameStateDeg[i] = gameStateDeg[j] and deg(i) < deg(j), then i
-    //   preceeds j.
+    // - if -1 < gameStateDeg[i] < gameStateDeg[j] then i preceeds j.
     vector<int> lowDegVtx;
-
-    // For an unclaimed vertex i, pot[i] measures by how much the overall 
-    // Erdős-Selfridge potential drops if Dominator claims vertex i in the next
-    // move. This is the same as the quantity by which the overall potential 
-    // increases if Staller claims vertex i in the next move. For claimed 
-    // vertices j, pot[j] is undefined and can be anything.
-    vector<double> pot;
 
     // totalPot is the total ES potential of any completion of this partially 
     // completed core game state.
     double totalPot;
+
+    // For an unclaimed vertex i, pot[i] measures by how much totalPot drops if 
+    // Dominator claims vertex i in the next move. This is the same as the 
+    // quantity by which totalPot increases if Staller claims vertex i in the 
+    // next move. For claimed vertices j, pot[j] is undefined and can be 
+    // anything.
+    vector<double> pot;
+
+
     
     // A vector containing all unclaimed vertices of degree at least 3.
     vector<int> remVtx;

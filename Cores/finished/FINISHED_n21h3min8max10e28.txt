@@ -1,6 +1,0 @@
-Checking sequences: 
-n = 21, high Vtx = 8 10 10 
-n = 21, high Vtx = 9 9 10 
-Number of cores to check: 675
-Finished checking
-

@@ -1,25 +1,13 @@
 #include "part_compl_core_game_state.h"
 #include <iostream>
-#include <utility>
 #include <algorithm>
 #include <stdexcept>
 #include <cmath>
 #include <fstream>
-#include <cstring>
-#include <chrono>
-#include <ctime>
-#include <iomanip>
-#include <numeric>
 #include <sstream>
-#include <cstdio>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <fcntl.h>
 #include <thread>
-
-
-using namespace std;
-using namespace std::chrono;
 
 vector<vector<int>> inputDegSequences;
 
@@ -50,11 +38,11 @@ PartComplCoreGameState::PartComplCoreGameState(const string& graph6) :
 
 void PartComplCoreGameState::update() {
     int n = getN();
-    totalPot = 0.;
-    remVtx.clear();
-    lowDegVtx.clear();
     gameStateDeg.assign(n, 0);
+    lowDegVtx.clear();
+    totalPot = 0.;
     pot.assign(n, 0.);
+    remVtx.clear();
 
     // set gameStateDeg[i] = -1 for vertices i claimed by Dominator or adjacent
     // to a vertex claimed by Dominator
