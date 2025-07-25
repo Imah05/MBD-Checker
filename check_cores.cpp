@@ -14,8 +14,7 @@ int main() {
     int counter = 0;
     while(getline(cin, graph6)) {
         if (!completionFilter(graph6)) {
-            cout << "Found graph, on which Staller wins: " << graph6 << endl;
-            return 1;
+            cerr << "Found graph, on which Staller wins: " << graph6 << endl;
         }
         ++counter;
     }

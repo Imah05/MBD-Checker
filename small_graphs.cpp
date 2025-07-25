@@ -1,6 +1,27 @@
-#include "rsi.h"
+#include "small_graphs.h"
 #include <iostream>
 #include <cstring>
+
+bool checkGraph(string cmd, char firstPlayer) {
+    FILE *pipe = popen(cmd.c_str(), "r");
+    if (!popen) {
+        pclose(pipe);
+        throw runtime_error("checkGraph: popen failed");
+    }
+    char buffer[128];
+    string graph6;
+    
+    while(fgets(buffer, sizeof(buffer), pipe)) {
+        buffer[strcspn(buffer, "\n")] = 0;
+        graph6 = buffer;
+        GameState gameState(graph6);
+        if (gameState.outcome(firstPlayer) == 'S') {
+            return false;
+        }
+    }
+    pclose(pipe);
+    return true;
+}
 
 list<string> checkR(string cmd, char firstPlayer, int surBound) {
     list<string> out;
