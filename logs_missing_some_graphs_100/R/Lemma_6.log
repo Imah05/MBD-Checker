@@ -1,0 +1,18 @@
+=== Log file for R-Lemma 6
+
+
+
+>A nauty-geng -d2D9 n=13 e=17-20
+>Z 55513430 graphs generated in 73.21 sec
+>F 55513430 R-graphs checked in 2106.63 sec
+>A nauty-geng -d2D9 n=14 e=19-22
+>Z 1262983066 graphs generated in 1641.04 sec
+>F 1262983066 R-graphs checked in 53217.14 sec
+
+
+
+===Total number of R-graphs generated: 1318496496
+===Total number of R-graphs checked: 1318496496
+===Total time for generation: 1714.25 seconds
+===Total time for checking: 55323.77 seconds
+===Total number of exceptional R-graphs: 0

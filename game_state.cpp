@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+using namespace std;
+
 GameState::GameState(string graph6) : Graph(graph6), 
                                 DVtx(vector<bool>(getN(), false)),
                                 SVtx(vector<bool>(getN(), false)) {

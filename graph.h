@@ -5,27 +5,22 @@
 #include <string>
 #include <set>
 
-using namespace std;
 
-/* Supports basic graph operations and conversions to and from 
- * the graph6 format, as well as canonical labeling by envoking
- * nauty's labelg.
- */
 class Graph {
 public:
-    Graph(const string& graph6);
+    Graph(const std::string& graph6);
     bool hasEdge(int u, int v) const;
 
     // Getter for the number of vertices
     int getN() const;
-    const set<int>& neighborhood(int u) const;
+    const std::set<int>& neighborhood(int u) const;
     int deg(int u) const;
 
-    string toGraph6() const;
+    std::string toGraph6() const;
 
 protected:
     // graph[i] contains all the vertices adjacent to vertex i.
-    vector<set<int>> graph; 
+    std::vector<std::set<int>> graph; 
 };
 
 #endif // GRAPH_H

@@ -9,12 +9,14 @@
 #include <sys/wait.h>
 #include <thread>
 
+using namespace std;
+
 vector<vector<int>> inputDegSequences;
 
 void loadInputSequences(const string& filename) {
     ifstream infile(filename);
     if (!infile) {
-        cerr << "Error opening file: " << filename << endl;
+        cerr << "Error opening file: " << filename << "\n";
         return;
     }
 
@@ -66,8 +68,8 @@ void PartComplCoreGameState::update() {
                     ++gameStateDeg[i];
                 }
             }
-            if (deg(i) < 3) {
-                gameStateDeg[i] += 3 - deg(i);
+            if (deg(i) < d) {
+                gameStateDeg[i] += d - deg(i);
             }
         }
     }
@@ -76,7 +78,7 @@ void PartComplCoreGameState::update() {
         if (gameStateDeg[i] != -1) {
             totalPot += pow(2,-gameStateDeg[i]);
         }
-        if (deg(i) < 3) {
+        if (deg(i) < d) {
             lowDegVtx.push_back(i);
         }
         else if (!DVtx[i] && !SVtx[i]) {
@@ -96,13 +98,13 @@ void PartComplCoreGameState::update() {
         return pot[left] > pot[right];
     });
     sort(lowDegVtx.begin(), lowDegVtx.end(), [&](auto left, auto right) {
-        if (gameStateDeg[left] != -1 && gameStateDeg[right] == -1) 
+        if (gameStateDeg[left] != -1 && gameStateDeg[right] == -1) {
             return true;
-        if (gameStateDeg[left] == -1 && gameStateDeg[right] != -1) 
+        }
+        if (gameStateDeg[left] == -1 && gameStateDeg[right] != -1) {
             return false;
-        if (gameStateDeg[left] != gameStateDeg[right])
-            return gameStateDeg[left] < gameStateDeg[right];
-        return deg(left) < deg(right);
+        }
+        return gameStateDeg[left] < gameStateDeg[right];
     });
 }
 
@@ -125,52 +127,41 @@ void PartComplCoreGameState::removeEdge(int u, int v) {
     }
 }
 
-int PartComplCoreGameState::outcome(char firstPlayer) const {
+char PartComplCoreGameState::potentialOutcome(char firstPlayer) const {
     if (firstPlayer != 'D' && firstPlayer != 'S') {
         throw invalid_argument("outcome: firstPlayer must be one of "
             "\'D\' or \'S\'");
     }
     for (int i = 0; i < getN(); ++i) {
         if (gameStateDeg[i] == 0) {
-            return -2;
+            return 'S';
         }
     }
     if (firstPlayer == 'D') {
         if (totalPot < 1) {
-            return -1;
+            return 'D';
         }
-        int out = -2;
-        int newOut;
         PartComplCoreGameState nextCoreGS = *this;
+        char uFlag = false;
         for (int i : remVtx) {
             nextCoreGS.DVtx[i] = true;
             nextCoreGS.update();
-            newOut = nextCoreGS.outcome('S');
-            if (newOut == -1) {
-                return -1;
+            char out = nextCoreGS.potentialOutcome('S');
+            if (out == 'D') {
+                return 'D';
             }
-            else if (out == -2) {
-                out = newOut;
+            if (out == 'U') {
+                uFlag = true;
             }
             nextCoreGS.DVtx[i] = false;
         }
-        if (out != -2) {
-            return lowDegVtx[0];
-            // return out;
-        }
-        else if (lowDegVtx.size() > 0) {
-            return lowDegVtx[0];
-        }
-        else {
-            return -2;
-        }
+        return uFlag ? 'U' : 'S';
     }
     else if (firstPlayer == 'S') {
         if (totalPot < 0.5) {
-            return -1;
+            return 'D';
         }
         
-        PartComplCoreGameState nextCoreGS = *this;
         for (int i : lowDegVtx) {
             double newTotalPot = totalPot;
             if (gameStateDeg[i] != -1) {
@@ -181,7 +172,7 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
                     newTotalPot += pow(2, -gameStateDeg[j]);
                 }
             }
-            int missingEdges = 3 - deg(i);
+            int missingEdges = d - deg(i);
             int j = 0;
             while (missingEdges > 0 && j < lowDegVtx.size()) {
                 int possNeigh = lowDegVtx[j];
@@ -193,24 +184,28 @@ int PartComplCoreGameState::outcome(char firstPlayer) const {
                 }
                 ++j;
             }
-            if (missingEdges == 0 && newTotalPot >= 1) {
-                return lowDegVtx[0];
-                // return i;
+            if (missingEdges <= 0 && newTotalPot >= 1) {
+                return 'U';
             }
         }
+        PartComplCoreGameState nextCoreGS = *this;
+        char uFlag = false;
         for (int i : remVtx) {
             nextCoreGS.SVtx[i] = true; 
             nextCoreGS.update(); 
-            int out = nextCoreGS.outcome('D');
-            if (out != -1) {
-                return out;
+            char out = nextCoreGS.potentialOutcome('D');
+            if (out == 'S') {
+                return 'S';
+            }
+            if (out == 'U') {
+                uFlag = true;
             }
             nextCoreGS.SVtx[i] = false;
         }
-        return -1;
+        return uFlag ? 'U' : 'D';
     }
     // unreachable return 
-    return -3;
+    return 'F';
 }
 
 unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
@@ -233,7 +228,7 @@ unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
         close(inPipe[1]);
         close(outPipe[0]); 
         close(outPipe[1]);
-        execlp("nauty-labelg", "nauty-labelg", "-q", nullptr);
+        execlp("labelg", "labelg", "-q", nullptr);
         _exit(1);
     }
 
@@ -271,46 +266,49 @@ unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec) {
     int status;
     waitpid(pid, &status, 0);
     if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-        throw runtime_error("nauty-labelg process failed");
+        throw runtime_error("labelg process failed");
     }
     return result;
 }
 
 
-bool PartComplCoreGameState::completionFilter() const {
-    vector<string> g6Vec = {toGraph6()};
+char completionOutcome(const string& graph6, char firstPlayer) {
+    vector<string> g6Vec = {graph6};
     while(!g6Vec.empty()) {
         unordered_set<string> g6Set = labelCanonicalBatch(g6Vec);
         g6Vec.clear();
         for (string g6 : g6Set) {
             PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
-            int a = coreGs.outcome('D');
-            if (a == -1) {
+            char out = coreGs.potentialOutcome(firstPlayer);
+            if (out == 'D') {
                 continue;
             }
-            else if (a == -2) {
-                return false;
+            else if (out == 'S') {
+                return 'S';
             }
-            PartComplCoreGameState newCoreGS(coreGs);
-            for (int b : coreGs.lowDegVtx) {
-                if (!coreGs.hasEdge(a, b) && b != a) {
-                    newCoreGS.addEdge(a, b);
-                    g6Vec.push_back(newCoreGS.toGraph6());
-                    newCoreGS.removeEdge(a, b);
+            else if (out == 'U') {
+                int v = coreGs.lowDegVtx[0];
+                PartComplCoreGameState newCoreGS(coreGs);
+                for (int w : coreGs.lowDegVtx) {
+                    if (!coreGs.hasEdge(v, w) && w != v) {
+                        newCoreGS.addEdge(v, w);
+                        g6Vec.push_back(newCoreGS.toGraph6());
+                        newCoreGS.removeEdge(v, w);
+                    }
                 }
             }
         }
     }
-    return true;
+    return 'D';
 }
 
-bool completionFilter(const string& graph6) {
-    PartComplCoreGameState pcc(graph6);
+bool filter(const string& graph6) {
+    Graph pcc(graph6);
     vector<int> degSeq;
     for (int i = 0; i < pcc.getN(); ++i) {
         int deg = pcc.deg(i);
-        if (deg <= 3) {
-            degSeq.push_back(3);
+        if (deg <= d) {
+            degSeq.push_back(d);
         }
         else {
             degSeq.push_back(deg);
@@ -320,7 +318,7 @@ bool completionFilter(const string& graph6) {
 
     for (vector<int> curDegSeq : inputDegSequences) {
         if (curDegSeq == degSeq) {
-            return pcc.completionFilter();
+            return completionOutcome(graph6, 'D') == 'D';
         }
     }
     return true;

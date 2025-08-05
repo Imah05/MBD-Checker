@@ -3,6 +3,8 @@
 #include <fstream>
 #include <cstring>
 
+using namespace std;
+
 Graph::Graph(const string& graph6) {
     int n = graph6[0] - 63;
     if (n < 0 || n > 62) {

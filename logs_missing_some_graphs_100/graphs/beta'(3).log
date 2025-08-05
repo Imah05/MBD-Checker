@@ -1,0 +1,24 @@
+=== Log file for beta'(3)
+
+
+
+>A nauty-geng -d3D5 n=12 e=18-30
+>Z 96690970 graphs generated in 260.46 sec
+>F 96690970 graphs checked in 5155.78 sec
+>A nauty-geng -d3D5 n=11 e=17-27
+>Z 4018267 graphs generated in 10.21 sec
+>F 4018267 graphs checked in 172.02 sec
+>A nauty-geng -d3D4 n=10 e=15-20
+>Z 4428 graphs generated in 0.04 sec
+>F 4428 graphs checked in 0.24 sec
+>A nauty-geng -d3D4 n=9 e=14-18
+>Z 634 graphs generated in 0.01 sec
+>F 634 graphs checked in 0.02 sec
+
+
+
+===Total number of graphs generated: 100714299
+===Total number of graphs checked: 100714299
+===Total time for generation: 270.72 seconds
+===Total time for checking: 5328.06 seconds
+===Total number of exceptional graphs: 0

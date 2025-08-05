@@ -1,0 +1,15 @@
+=== Log file for SI-Lemma 4
+
+
+
+>A nauty-genbg n=8+9 e=27:27 d=2:3 D=8:3 
+>Z 262151 graphs generated in 2.82 sec
+>F 262151 SI-graphs checked in 208.25 sec
+
+
+
+===Total number of SI-graphs generated: 262151
+===Total number of SI-graphs checked: 262151
+===Total time for generation: 2.82 seconds
+===Total time for checking: 208.25 seconds
+===Total number of exceptional SI-graphs: 0

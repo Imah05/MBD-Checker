@@ -5,19 +5,22 @@
 #include <unordered_set>
 
 // A vector containing all the degree sequences of the graphs we want to check.
-extern vector<vector<int>> inputDegSequences;
+extern std::vector<std::vector<int>> inputDegSequences;
+
+// The minimum degree. 
+inline int d = 3;
 
 // Loads the degree sequences from the input file filename to inputDegSequences. 
 // Expects the degree sequences in filename to come in separate lines, where 
 // each line contains an increasingly sorted sequence of non-negative integers 
 // separated by whitespaces.
-void loadInputSequences(const string& filename = "input_sequences.txt");
+void loadInputSequences(const std::string& filename = "input_sequences.txt");
 
 class PartComplCoreGameState : public Graph {
 public:
-    // Creates a game state on a partially completed core represented by a 
-    // graph6 string, in which all the vertices are unclaimed. 
-    PartComplCoreGameState(const string& graph6);
+    // Creates a game state on a pcc represented by a graph6 string, in which 
+    // all the vertices are unclaimed. 
+    PartComplCoreGameState(const std::string& graph6);
 
     // Updates the vectors gameStateDeg, pot, lowDegVtx and remVtx as well as 
     // the double totalPot so that they match their description from below. The 
@@ -32,47 +35,42 @@ public:
     void removeEdge(int u, int v);
 
     // If it returns -1 then Dominator wins on every completion of this 
-    // partially completed core game state, where firstPlayer starts the game.
-    // If it returns -2 then Staller wins on some completion of this partially 
-    // completed core game state, where firstPlayer starts the game.
+    // pccgs, where firstPlayer starts the game. If it returns -2 then Staller 
+    // wins on some completion of this pccgs, where firstPlayer starts the game.
     // If it returns neither -1 nor -2 it returns a low degree vertex (which we
     // want to use first for completion).
-    int outcome(char firstPlayer) const;
+    char potentialOutcome(char firstPlayer) const;
 
-    // Returns true if and only if Dominator wins on every completion of this 
-    // partially completed core game going first and false otherwise. The game 
-    // state on this partially completed core is ignored and all vertices are 
-    // assumed to be unclaimed. 
-    bool completionFilter() const;
+    // Returns 'D' if Dominator wins on every completion of this pcc with 
+    // firstPlayer starting the game. Otherwise it returns 'S'.
+    friend char completionOutcome(const std::string& graph6, char firstPlayer);
             
 private:
     // A vector of length getN() such that DVtx[i] is true if and only if the 
     // vertex i is claimed by Dominator. DVtx[i] is always false for vertices i
-    // of degree less than 3.
-    vector<bool> DVtx;
+    // of degree less than d.
+    std::vector<bool> DVtx;
 
     // A vector of length getN() such that SVtx[i] is true if and only if the 
     // vertex i is claimed by Staller. SVtx[i] is always false for vertices i
-    // of degree less than 3.
-    vector<bool> SVtx;
+    // of degree less than d.
+    std::vector<bool> SVtx;
 
     // A vector of length getN() with the following property. If the vertex i is 
     // claimed by Dominator or adjacent to a vertex claimed by Dominator, then 
     // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is the number of 
     // unclaimed vertices in the closed neighborhood of i in any completion of 
-    // this partially completed core game state. Here the closed neighborhood is
-    // the set of vertices adjacent to i together with i itself.
-    vector<int> gameStateDeg;
+    // this pccgs.
+    std::vector<int> gameStateDeg;
 
     // A vector containing all the vertices of the underlying graph, that have 
-    // degree strictly less than three, ordered such that for two vertices i and
-    // j of degree at most 2 it holds that
+    // degree strictly less than d, ordered such that for two vertices i and j
+    // of degree less than d it holds that
     // - if gameStateDeg[i] != -1 and gameStateDeg[j] = -1, then i preceeds j,
     // - if -1 < gameStateDeg[i] < gameStateDeg[j] then i preceeds j.
-    vector<int> lowDegVtx;
+    std::vector<int> lowDegVtx;
 
-    // totalPot is the total ES potential of any completion of this partially 
-    // completed core game state.
+    // totalPot is the total ES potential of any completion of this pccgs.
     double totalPot;
 
     // For an unclaimed vertex i, pot[i] measures by how much totalPot drops if 
@@ -80,22 +78,22 @@ private:
     // quantity by which totalPot increases if Staller claims vertex i in the 
     // next move. For claimed vertices j, pot[j] is undefined and can be 
     // anything.
-    vector<double> pot;
+    std::vector<double> pot;
 
 
-    
-    // A vector containing all unclaimed vertices of degree at least 3.
-    vector<int> remVtx;
+    // A vector containing all unclaimed vertices of degree at least d.
+    std::vector<int> remVtx;
 };
 
 // Returns an unordered_set containing the canonically labeled graph6 strings 
 // of all the graph6 strings in the input vector by calling nauty's labelg
-unordered_set<string> labelCanonicalBatch(const vector<string>& graph6Vec);
+std::unordered_set<std::string> 
+                labelCanonicalBatch(const std::vector<std::string>& graph6Vec);
 
 // Requires the graph G corresponding to the input graph6 string to be a core. 
 // If the degree sequence of every completion of G occurs in inputDegSequences 
 // and Dominator wins on every completion of G it returns true. Otherwise it 
 // returns false.
-bool completionFilter(const string& graph6);
+bool filter(const std::string& graph6);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H

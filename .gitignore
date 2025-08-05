@@ -1,34 +1,8 @@
-# Compiled object files
-*.o
-*.out
-*.exe
-output
-main 
 check_graphs
 check_R
 check_SI
 check_cores
 
-
-# Build directories
-build/
-bin/
-
-# IDE files
 .vscode/
-.idea/
-*.sln
-*.vcxproj
-*.cmake
 
-# Miscellaneous
-*.log
-*.tmp
-trash/
-Cores/*
-temp/*
 tmp/*
-!Cores/nauty-cmds.txt
-!Cores/Jakobs-deg-seq.txt
-!Cores/finished/
-*.g6

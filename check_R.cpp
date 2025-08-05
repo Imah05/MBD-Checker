@@ -31,12 +31,12 @@ bool checkR(string graph6, char firstPlayer, int surBound) {
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        cerr << "Usage: " << argv[0] << " <firstPlayer> <surBound>" << endl;
+        cerr << "Usage: " << argv[0] << " <firstPlayer> <surBound>\n";
         return 1;
     }
     char firstPlayer = argv[1][0];
     if (firstPlayer != 'D' && firstPlayer != 'S') {
-        cerr << "First player must be 'D' or 'S'" << endl;
+        cerr << "First player must be 'D' or 'S'\n";
         return 1;
     }
     int surBound = atoi(argv[2]);
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     int counter = 0, exceptionalCounter = 0;
     while(getline(cin, graph6)) {
         if (!checkR(graph6, firstPlayer, surBound)) {
-            cerr << "Found graph, on which Staller wins: " << graph6 << endl;
+            cerr << "Found graph, on which Staller wins: " << graph6 << "\n";
             ++exceptionalCounter;
         }
         ++counter;
@@ -55,8 +55,7 @@ int main(int argc, char* argv[]) {
     clock_t c_end = clock();
     double time = double(c_end - c_start) / CLOCKS_PER_SEC;
     cerr << fixed << setprecision(2);
-    cerr << ">F " << counter << " R-graphs checked in " << time << " sec" 
-        << endl;
+    cerr << ">F " << counter << " R-graphs checked in " << time << " sec\n";
     return 0;
 }
 
