@@ -24,3 +24,25 @@ int main() {
     cerr << ">F " << counter << " cores checked in " << time << " sec\n";
     return 0;
 }
+
+
+int main() {
+    vector<vector<int>> result = generateSeqs(16, 21, 3, 9);
+
+    ofstream outFile("sequences1.txt");
+    if (!outFile) {
+        cerr << "Error opening file sequences.txt" << endl;
+        return 1;
+    }
+
+    for (const auto& seq : result) {
+        for (size_t i = 0; i < seq.size(); ++i) {
+            outFile << seq[i];
+            if (i + 1 < seq.size()) outFile << " ";
+        }
+        outFile << "\n";
+    }
+
+    outFile.close();
+    return 0;
+}

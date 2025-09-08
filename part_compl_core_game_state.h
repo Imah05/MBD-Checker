@@ -4,11 +4,10 @@
 #include "graph.h"
 #include <unordered_set>
 
-// A vector containing all the degree sequences of the graphs we want to check.
-extern std::vector<std::vector<int>> inputDegSequences;
-
 // The minimum degree. 
 inline int d = 3;
+
+extern std::vector<std::vector<int>> inSeqs;
 
 // Loads the degree sequences from the input file filename to inputDegSequences. 
 // Expects the degree sequences in filename to come in separate lines, where 
@@ -90,10 +89,17 @@ private:
 std::unordered_set<std::string> 
                 labelCanonicalBatch(const std::vector<std::string>& graph6Vec);
 
+
+
+
+// Returns a vector of all degree sequences with N1 <= N <= N2 entries, minimum 
+// entry d and surplus at most surBound.
+std::vector<std::vector<int>> generateSeqs(int N1, int N2, int d, int surBound);
+
 // Requires the graph G corresponding to the input graph6 string to be a core. 
-// If the degree sequence of every completion of G occurs in inputDegSequences 
-// and Dominator wins on every completion of G it returns true. Otherwise it 
+// If the degree sequence of every completion of G occurs in inSeqs and 
+// Dominator wins on every completion of G it returns true. Otherwise it 
 // returns false.
-bool filter(const std::string& graph6);
+bool filter(const std::string& graph6, std::vector<std::vector<int>> inSeqs);
 
 #endif // PART_COMPL_CORE_GAME_STATE_H

@@ -1,6 +1,9 @@
-#include "sequence_generator.h"
 #include <cmath>
 #include <numeric>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
 using namespace std;
 
 vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
@@ -60,4 +63,26 @@ vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
         }
     }
     return result;
+}
+
+
+int main() {
+    vector<vector<int>> result = generateSeqs(16, 21, 3, 9);
+
+    ofstream outFile("sequences1.txt");
+    if (!outFile) {
+        cerr << "Error opening file sequences.txt" << endl;
+        return 1;
+    }
+
+    for (const auto& seq : result) {
+        for (size_t i = 0; i < seq.size(); ++i) {
+            outFile << seq[i];
+            if (i + 1 < seq.size()) outFile << " ";
+        }
+        outFile << "\n";
+    }
+
+    outFile.close();
+    return 0;
 }

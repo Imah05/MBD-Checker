@@ -55,7 +55,6 @@ done
 # starting R jobs ##############################################################
 g++ game_state.cpp graph.cpp check_R.cpp -o check_R
 
-# Takes a nauty command, a first player and a surBound
 run_R_job() {
     cmd_name=$(echo "$1" | tr ' /' '__')
     mkdir -p "$tmp_dir/$4"
@@ -67,32 +66,32 @@ run_R_job() {
 }
 
 
-# echo "=== Running R-Lemma 2"
+echo "=== Running R-Lemma 2"
 
-# run_R_job "geng -d1 5" "S" "5" "R-Lemma_2" &
-# run_R_job "geng -d1 6" "S" "5" "R-Lemma_2" &
-
-
-# echo "=== Running R-Lemma 3"
-
-# run_R_job "geng -d1 4" "S" "2" "R-Lemma_3" &
-# run_R_job "geng -d1 5" "S" "2" "R-Lemma_3" &
-# run_R_job "geng -d1 6" "S" "2" "R-Lemma_3" &
-# run_R_job "geng -d1 7" "S" "2" "R-Lemma_3" &
+run_R_job "geng -d1 5" "S" "5" "R-Lemma_2" &
+run_R_job "geng -d1 6" "S" "5" "R-Lemma_2" &
 
 
-# echo "=== Running R-Lemma 4"
+echo "=== Running R-Lemma 3"
 
-# run_R_job "geng -d1D3 9 11:11" "D" "5" "R-Lemma_4" &
-# run_R_job "geng -d1D6 10 13:14" "D" "5" "R-Lemma_4" &
-# run_R_job "geng -d1D8 11 14:17" "D" "5" "R-Lemma_4" &
-# run_R_job "geng -d1D9 12 16:19" "D" "5" "R-Lemma_4" &
+run_R_job "geng -d1 4" "S" "2" "R-Lemma_3" &
+run_R_job "geng -d1 5" "S" "2" "R-Lemma_3" &
+run_R_job "geng -d1 6" "S" "2" "R-Lemma_3" &
+run_R_job "geng -d1 7" "S" "2" "R-Lemma_3" &
 
 
-# echo "=== Running R-Lemma 6"
+echo "=== Running R-Lemma 4"
 
-# run_R_job "geng -d2D9 13 17:20" "D" "5" "R-Lemma_6" &
-# run_R_job "geng -d2D9 14 19:22" "D" "5" "R-Lemma_6" &
+run_R_job "geng -d1D3 9 11:11" "D" "5" "R-Lemma_4" &
+run_R_job "geng -d1D6 10 13:14" "D" "5" "R-Lemma_4" &
+run_R_job "geng -d1D8 11 14:17" "D" "5" "R-Lemma_4" &
+run_R_job "geng -d1D9 12 16:19" "D" "5" "R-Lemma_4" &
+
+
+echo "=== Running R-Lemma 6"
+
+run_R_job "geng -d2D9 13 17:20" "D" "5" "R-Lemma_6" &
+run_R_job "geng -d2D9 14 19:22" "D" "5" "R-Lemma_6" &
 
 
 
@@ -114,49 +113,49 @@ run_SI_job() {
     } &> "$tmpfile"
 }
 
-# echo "=== Running SI-Lemma 1"
+echo "=== Running SI-Lemma 1"
 
-# run_SI_job "genbg -d2:3 -D7:3 6 7" "S" "5" "SI-Lemma_1" &
-# run_SI_job "genbg -d2:3 -D6:3 5 6" "S" "5" "SI-Lemma_1" &
-# run_SI_job "genbg -d2:3 -D5:3 4 5" "S" "5" "SI-Lemma_1" &
-# run_SI_job "genbg -d2:3 -D4:3 3 4" "S" "5" "SI-Lemma_1" &
-
-
-# echo "=== Running SI-Lemma 2"
-
-# run_SI_job "genbg -d2:2 -D9:3 7 9 26:26" "D" "4" "SI-Lemma_2" &
-# run_SI_job "genbg -d2:2 -D8:3 6 8 23:23" "D" "4" "SI-Lemma_2" &
-# run_SI_job "genbg -d2:2 -D7:3 5 7 20:20" "D" "4" "SI-Lemma_2" &
-# run_SI_job "genbg -d2:2 -D6:3 4 6 17:17" "D" "4" "SI-Lemma_2" &
-# run_SI_job "genbg -d2:2 -D5:3 3 5 14:14" "D" "4" "SI-Lemma_2" &
+run_SI_job "genbg -d2:3 -D7:3 6 7" "S" "5" "SI-Lemma_1" &
+run_SI_job "genbg -d2:3 -D6:3 5 6" "S" "5" "SI-Lemma_1" &
+run_SI_job "genbg -d2:3 -D5:3 4 5" "S" "5" "SI-Lemma_1" &
+run_SI_job "genbg -d2:3 -D4:3 3 4" "S" "5" "SI-Lemma_1" &
 
 
-# echo "=== Running SI-Lemma 3"
+echo "=== Running SI-Lemma 2"
 
-# run_SI_job "genbg -d2:3 -D8:3 7 8" "D" "5" "SI-Lemma_3" &
-
-
-# echo "=== Running SI-Lemma 4"
-
-# run_SI_job "genbg -d2:3 -D8:3 8 9" "D" "5" "SI-Lemma_4" &
-
-
-# echo "=== Running SI-Lemma 5"
-
-# run_SI_job "genbg -d2:3 -D4:3 9 10" "D" "5" "SI-Lemma_5" &
+run_SI_job "genbg -d2:2 -D9:3 7 9 26:26" "D" "4" "SI-Lemma_2" &
+run_SI_job "genbg -d2:2 -D8:3 6 8 23:23" "D" "4" "SI-Lemma_2" &
+run_SI_job "genbg -d2:2 -D7:3 5 7 20:20" "D" "4" "SI-Lemma_2" &
+run_SI_job "genbg -d2:2 -D6:3 4 6 17:17" "D" "4" "SI-Lemma_2" &
+run_SI_job "genbg -d2:2 -D5:3 3 5 14:14" "D" "4" "SI-Lemma_2" &
 
 
-# echo "=== Running SI-Lemma 6"
+echo "=== Running SI-Lemma 3"
 
-# run_SI_job "genbg -d2:3 -D7:3 5 7" "S" "2" "SI-Lemma_6" &
-# run_SI_job "genbg -d2:3 -D6:3 4 6" "D" "2" "SI-Lemma_6" &
-# run_SI_job "genbg -d2:3 -D5:3 3 5" "D" "2" "SI-Lemma_6" &
+run_SI_job "genbg -d2:3 -D8:3 7 8" "D" "5" "SI-Lemma_3" &
 
 
-# echo "=== Running SI-Lemma 7"
+echo "=== Running SI-Lemma 4"
 
-# run_SI_job "genbg -d2:3 -D9:3 7 9" "D" "2" "SI-Lemma_7" &
-# run_SI_job "genbg -d2:3 -D8:3 6 8" "D" "2" "SI-Lemma_7" &
+run_SI_job "genbg -d2:3 -D8:3 8 9" "D" "5" "SI-Lemma_4" &
+
+
+echo "=== Running SI-Lemma 5"
+
+run_SI_job "genbg -d2:3 -D4:3 9 10" "D" "5" "SI-Lemma_5" &
+
+
+echo "=== Running SI-Lemma 6"
+
+run_SI_job "genbg -d2:3 -D7:3 5 7" "S" "2" "SI-Lemma_6" &
+run_SI_job "genbg -d2:3 -D6:3 4 6" "D" "2" "SI-Lemma_6" &
+run_SI_job "genbg -d2:3 -D5:3 3 5" "D" "2" "SI-Lemma_6" &
+
+
+echo "=== Running SI-Lemma 7"
+
+run_SI_job "genbg -d2:3 -D9:3 7 9" "D" "2" "SI-Lemma_7" &
+run_SI_job "genbg -d2:3 -D8:3 6 8" "D" "2" "SI-Lemma_7" &
 
 while [ "$(jobs -rp | wc -l)" -ge "$k" ]; do
     sleep 0.2
@@ -166,44 +165,44 @@ done
 g++ part_compl_core_game_state.cpp graph.cpp check_cores.cpp -o check_cores
 
 cores_cmd_arr=(
-# "genbg -d8:0 -D8:3 3 16 24:24"
-# "genbg -d7:0 -D8:3 3 17 23:23"
-# "genbg -d7:0 -D9:3 3 17 25:25"
-# "genbg -d9:0 -D9:3 3 17 27:27"
-# "genbg -d6:0 -D6:3 4 16 24:24"
-# "genbg -d4:0 -D8:3 4 16 26:26"
-# "genbg -d4:0 -D8:3 4 16 28:28"
-# "genbg -d6:0 -D8:3 4 16 30:30"
-# "genbg -d8:0 -D8:3 4 16 32:32"
-# "genbg -d4:0 -D6:3 5 15 27:27"
-# "genbg -d4:0 -D7:3 5 15 29:29"
-# "genbg -d6:0 -D9:3 3 18 24:24"
-# "genbg -d6:0 -D10:3 3 18 26:26"
-# "genbg -d8:0 -D10:3 3 18 28:28"
-# "genbg -d10:0 -D10:3 3 18 30:30"
-# "genbg -d4:0 -D7:3 4 17 25:25"
-# "genbg -d4:0 -D9:3 4 17 27:27"
-# "genbg -d4:0 -D9:3 4 17 29:29"
-# "genbg -d4:0 -D9:3 4 17 31:31"
-# "genbg -d6:0 -D9:3 4 17 33:33"
-# "genbg -d8:0 -D9:3 4 17 35:35"
-# "genbg -d4:0 -D7:3 5 16 28:28"
-# "genbg -d4:0 -D8:3 5 16 30:30"
-# "genbg -d4:0 -D8:3 5 16 32:32"
-# "genbg -d4:0 -D8:3 5 16 34:34"
-# "genbg -d4:0 -D8:3 5 16 36:36"
-# "genbg -d6:0 -D8:3 5 16 38:38"
-# "genbg -d8:0 -D8:3 5 16 40:40"
-# "genbg -d4:0 -D5:3 6 15 29:29"
-# "genbg -d4:0 -D7:3 6 15 31:31"
-# "genbg -d4:0 -D7:3 6 15 33:33"
-# "genbg -d4:0 -D7:3 6 15 35:35"
-# "genbg -d4:0 -D7:3 6 15 37:37"
-# "genbg -d4:0 -D5:3 7 14 32:32"
-# "genbg -d4:0 -D7:3 7 14 34:34"
-# "genbg -d4:0 -D7:3 7 14 36:36"
-# "genbg -d4:0 -D5:3 8 13 35:35" 
-# "genbg -d4:0 -D6:3 8 13 37:37"
+"genbg -d8:0 -D8:3 3 16 24:24"
+"genbg -d7:0 -D8:3 3 17 23:23"
+"genbg -d7:0 -D9:3 3 17 25:25"
+"genbg -d9:0 -D9:3 3 17 27:27"
+"genbg -d6:0 -D6:3 4 16 24:24"
+"genbg -d4:0 -D8:3 4 16 26:26"
+"genbg -d4:0 -D8:3 4 16 28:28"
+"genbg -d6:0 -D8:3 4 16 30:30"
+"genbg -d8:0 -D8:3 4 16 32:32"
+"genbg -d4:0 -D6:3 5 15 27:27"
+"genbg -d4:0 -D7:3 5 15 29:29"
+"genbg -d6:0 -D9:3 3 18 24:24"
+"genbg -d6:0 -D10:3 3 18 26:26"
+"genbg -d8:0 -D10:3 3 18 28:28"
+"genbg -d10:0 -D10:3 3 18 30:30"
+"genbg -d4:0 -D7:3 4 17 25:25"
+"genbg -d4:0 -D9:3 4 17 27:27"
+"genbg -d4:0 -D9:3 4 17 29:29"
+"genbg -d4:0 -D9:3 4 17 31:31"
+"genbg -d6:0 -D9:3 4 17 33:33"
+"genbg -d8:0 -D9:3 4 17 35:35"
+"genbg -d4:0 -D7:3 5 16 28:28"
+"genbg -d4:0 -D8:3 5 16 30:30"
+"genbg -d4:0 -D8:3 5 16 32:32"
+"genbg -d4:0 -D8:3 5 16 34:34"
+"genbg -d4:0 -D8:3 5 16 36:36"
+"genbg -d6:0 -D8:3 5 16 38:38"
+"genbg -d8:0 -D8:3 5 16 40:40"
+"genbg -d4:0 -D5:3 6 15 29:29"
+"genbg -d4:0 -D7:3 6 15 31:31"
+"genbg -d4:0 -D7:3 6 15 33:33"
+"genbg -d4:0 -D7:3 6 15 35:35"
+"genbg -d4:0 -D7:3 6 15 37:37"
+"genbg -d4:0 -D5:3 7 14 32:32"
+"genbg -d4:0 -D7:3 7 14 34:34"
+"genbg -d4:0 -D7:3 7 14 36:36"
+"genbg -d4:0 -D5:3 8 13 35:35" 
+"genbg -d4:0 -D6:3 8 13 37:37"
 )
 
 n=150
