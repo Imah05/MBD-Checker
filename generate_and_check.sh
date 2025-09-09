@@ -161,8 +161,15 @@ while [ "$(jobs -rp | wc -l)" -ge "$k" ]; do
     sleep 0.2
 done
 
+# generating degree sequences ##################################################
+
+g++ sequence_generator.cpp -o sequence_generator
+
+echo "=== Generating degree sequences" 
+./sequence_generator &
+
 # starting cores jobs ##########################################################
-g++ part_compl_core_game_state.cpp graph.cpp check_cores.cpp -o check_cores
+g++ pccgs.cpp graph.cpp check_cores.cpp -o check_cores
 
 cores_cmd_arr=(
 "genbg -d8:0 -D8:3 3 16 24:24"
@@ -258,11 +265,11 @@ for dir in "$tmp_dir"/*/; do
     time_compl=$(printf "%.2f" "$time_compl")
     exc_graphs=$(grep -c '^Found graph' "$log_file")
 
-    echo "===Total number of graphs generated: $graph_nauty" >> "$log_file"
-    echo "===Total number of graphs checked: $graph_compl" >> "$log_file"
-    echo "===Total time for generation: $time_nauty seconds" >> "$log_file"
-    echo "===Total time for checking: $time_compl seconds" >> "$log_file"
-    echo "===Total number of exceptional graphs: $exc_graphs" >> "$log_file"
+    echo "=== Total number of graphs generated: $graph_nauty" >> "$log_file"
+    echo "=== Total number of graphs checked: $graph_compl" >> "$log_file"
+    echo "=== Total time for generation: $time_nauty seconds" >> "$log_file"
+    echo "=== Total time for checking: $time_compl seconds" >> "$log_file"
+    echo "=== Total number of exceptional graphs: $exc_graphs" >> "$log_file"
 done
 
 rm -rf "$tmp_dir"

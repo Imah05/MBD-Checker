@@ -1,5 +1,5 @@
-#ifndef PART_COMPL_CORE_GAME_STATE_H
-#define PART_COMPL_CORE_GAME_STATE_H
+#ifndef PCCGS_H
+#define PCCGS_H
 
 #include "graph.h"
 #include <unordered_set>
@@ -15,11 +15,11 @@ extern std::vector<std::vector<int>> inSeqs;
 // separated by whitespaces.
 void loadInputSequences(const std::string& filename = "input_sequences.txt");
 
-class PartComplCoreGameState : public Graph {
+class Pccgs : public Graph {
 public:
     // Creates a game state on a pcc represented by a graph6 string, in which 
     // all the vertices are unclaimed. 
-    PartComplCoreGameState(const std::string& graph6);
+    Pccgs(const std::string& graph6);
 
     // Updates the vectors gameStateDeg, pot, lowDegVtx and remVtx as well as 
     // the double totalPot so that they match their description from below. The 
@@ -93,13 +93,13 @@ std::unordered_set<std::string>
 
 
 // Returns a vector of all degree sequences with N1 <= N <= N2 entries, minimum 
-// entry d and surplus at most surBound.
+// entry d and surplus at least surBound.
 std::vector<std::vector<int>> generateSeqs(int N1, int N2, int d, int surBound);
 
 // Requires the graph G corresponding to the input graph6 string to be a core. 
 // If the degree sequence of every completion of G occurs in inSeqs and 
 // Dominator wins on every completion of G it returns true. Otherwise it 
 // returns false.
-bool filter(const std::string& graph6, std::vector<std::vector<int>> inSeqs);
+bool filter(const std::string& graph6);
 
-#endif // PART_COMPL_CORE_GAME_STATE_H
+#endif // PCCGS_H

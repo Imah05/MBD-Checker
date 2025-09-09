@@ -1,4 +1,4 @@
-#include "part_compl_core_game_state.h"
+#include "pccgs.h"
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
@@ -14,13 +14,32 @@ using namespace std;
 
 vector<vector<int>> inSeqs; 
 
-PartComplCoreGameState::PartComplCoreGameState(const string& graph6) : 
+void loadInputSequences(const string& filename) {
+    ifstream infile(filename);
+    if (!infile) {
+        cerr << "Error opening file: " << filename << endl;
+        return;
+    }
+
+    string line;
+    while (getline(infile, line)) {
+        istringstream iss(line);
+        vector<int> sequence;
+        int num;
+        while (iss >> num) {
+            sequence.push_back(num);
+        }
+        inputDegSequences.push_back(sequence);
+    }
+}
+
+Pccgs::Pccgs(const string& graph6) : 
                             Graph(graph6), DVtx(vector<bool>(getN(), false)), 
                             SVtx(vector<bool>(getN(), false)) {
     update();
 }
 
-void PartComplCoreGameState::update() {
+void Pccgs::update() {
     int n = getN();
     gameStateDeg.assign(n, 0);
     lowDegVtx.clear();
@@ -90,7 +109,7 @@ void PartComplCoreGameState::update() {
     });
 }
 
-void PartComplCoreGameState::addEdge(int u, int v) {
+void Pccgs::addEdge(int u, int v) {
     int n = getN();
     if (u < 0 || v < 0 || u >= n || v >= n) {
         throw out_of_range("addEdge: vertex index out of bounds");
@@ -102,14 +121,14 @@ void PartComplCoreGameState::addEdge(int u, int v) {
     graph[v].insert(u);
 }
 
-void PartComplCoreGameState::removeEdge(int u, int v) {
+void Pccgs::removeEdge(int u, int v) {
     if (hasEdge(u, v)) {
         graph[u].erase(v);
         graph[v].erase(u);
     }
 }
 
-char PartComplCoreGameState::potentialOutcome(char firstPlayer) const {
+char Pccgs::potentialOutcome(char firstPlayer) const {
     if (firstPlayer != 'D' && firstPlayer != 'S') {
         throw invalid_argument("outcome: firstPlayer must be one of "
             "\'D\' or \'S\'");
@@ -126,7 +145,7 @@ char PartComplCoreGameState::potentialOutcome(char firstPlayer) const {
         if (remVtx.empty() && !lowDegVtx.empty()) {
             return 'U';
         }
-        PartComplCoreGameState nextCoreGS = *this;
+        Pccgs nextCoreGS = *this;
         char uFlag = false;
         for (int i : remVtx) {
             nextCoreGS.DVtx[i] = true;
@@ -173,7 +192,7 @@ char PartComplCoreGameState::potentialOutcome(char firstPlayer) const {
                 return 'U';
             }
         }
-        PartComplCoreGameState nextCoreGS = *this;
+        Pccgs nextCoreGS = *this;
         char uFlag = false;
         for (int i : remVtx) {
             nextCoreGS.SVtx[i] = true; 
@@ -263,7 +282,7 @@ char completionOutcome(const string& graph6, char firstPlayer) {
         unordered_set<string> g6Set = labelCanonicalBatch(g6Vec);
         g6Vec.clear();
         for (string g6 : g6Set) {
-            PartComplCoreGameState coreGs = PartComplCoreGameState(g6);
+            Pccgs coreGs = Pccgs(g6);
             char out = coreGs.potentialOutcome(firstPlayer);
             if (out == 'D') {
                 continue;
@@ -273,7 +292,7 @@ char completionOutcome(const string& graph6, char firstPlayer) {
             }
             else if (out == 'U') {
                 int v = coreGs.lowDegVtx[0];
-                PartComplCoreGameState newCoreGS(coreGs);
+                Pccgs newCoreGS(coreGs);
                 for (int w : coreGs.lowDegVtx) {
                     if (!coreGs.hasEdge(v, w) && w != v) {
                         newCoreGS.addEdge(v, w);
