@@ -40,15 +40,15 @@ private:
     // Erdős-Selfridge potential drops if Dominator claims vertex i in the next
     // move. This is the same as the quantity by which the overall potential 
     // increases if Staller claims vertex i in the next move. For claimed 
-    // vertices j, pot[j] is undefined and can be anything.
+    // vertices j, pot[j] is undefined.
     std::vector<double> pot;
 
     // The total Erdős-Selfridge potential of this game state.
     double totalPot;
 
     // A vector containing all the unclaimed vertices of this game state ordered
-    // by their potential. If i and j are two unclaimed vertices with pot[i] > 
-    // pot[j] then i appears before j in remVtx
+    // by their potential, that is if i and j are two unclaimed vertices with 
+    // pot[i] > pot[j] then i appears before j in remVtx.
     std::vector<int> remVtx;
 };
 

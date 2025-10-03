@@ -11,7 +11,6 @@ public:
     Graph(const std::string& graph6);
     bool hasEdge(int u, int v) const;
 
-    // Getter for the number of vertices
     int getN() const;
     const std::set<int>& neighborhood(int u) const;
     int deg(int u) const;

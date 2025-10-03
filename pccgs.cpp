@@ -29,7 +29,7 @@ void loadInputSequences(const string& filename) {
         while (iss >> num) {
             sequence.push_back(num);
         }
-        inputDegSequences.push_back(sequence);
+        inSeqs.push_back(sequence);
     }
 }
 

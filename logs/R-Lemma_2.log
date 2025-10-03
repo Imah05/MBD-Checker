@@ -1,0 +1,24 @@
+=== Log file for R-Lemma_2
+
+
+
+>A geng -d1D4 n=5 e=3-10
+>Z 23 graphs generated in 0.00 sec
+Found graph, on which Staller wins: DEw
+Found graph, on which Staller wins: DEk
+Found graph, on which Staller wins: DE{
+>F 23 R-graphs checked in 0.00 sec
+>A geng -d1D5 n=6 e=3-15
+>Z 122 graphs generated in 0.00 sec
+Found graph, on which Staller wins: E?zo
+Found graph, on which Staller wins: ECfo
+Found graph, on which Staller wins: ECfw
+>F 122 R-graphs checked in 0.01 sec
+
+
+
+=== Total number of graphs generated: 145
+=== Total number of graphs checked: 145
+=== Total time for generation: 0.00 seconds
+=== Total time for checking: 0.01 seconds
+=== Total number of exceptional graphs: 6

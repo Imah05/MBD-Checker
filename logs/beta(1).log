@@ -1,0 +1,18 @@
+=== Log file for beta(1)
+
+
+
+>A geng -d1D3 n=4 e=2-6
+>Z 7 graphs generated in 0.00 sec
+>F 7 graphs checked in 0.00 sec
+>A geng -d1D4 n=5 e=3-10
+>Z 23 graphs generated in 0.00 sec
+>F 23 graphs checked in 0.00 sec
+
+
+
+=== Total number of graphs generated: 30
+=== Total number of graphs checked: 30
+=== Total time for generation: 0.00 seconds
+=== Total time for checking: 0.00 seconds
+=== Total number of exceptional graphs: 0

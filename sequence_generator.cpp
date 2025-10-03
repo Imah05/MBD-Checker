@@ -13,24 +13,24 @@ vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
         seq[N - 1] = d + 1; 
         seq[N - 2] = d + 1; 
         while(seq[0] == d) {
-            int n = 0;
+            int n = 1;
             for (int i : seq) {
                 if (i == d) {
                     ++n;
                 }
             }
-            int D1 = seq[N - 1];
+            int dN = seq[N - 1];
             double maxPot = 0.;
-            for (int i = N - 2; i < N - 1; ++i) {
-                int Di = seq[i];
-                double totalPot = pow(2, -Di);
-                if (n > D1 + Di) {
-                    totalPot += (n - D1 + Di) * pow(2, -d - 1);
+            for (int i = n - 1; i < N - 1; ++i) {
+                int di = seq[i];
+                double totalPot = pow(2, -di);
+                if (n - 1 - dN > di) {
+                    totalPot += (n - 1 - dN + di) * pow(2, -d - 1);
                 }
                 else {
-                    totalPot += (2 * n - 2 * D1) * pow(2, -d - 1);
+                    totalPot += (2 * n - 2 - 2 * dN) * pow(2, -d - 1);
                 }
-                for (int j = n; j < N - 1; ++j) {
+                for (int j = n - 1; j < N - 1; ++j) {
                     if (j != i) {
                         totalPot += pow(2, -seq[j] - 1);
                     }
@@ -41,27 +41,22 @@ vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
             }
             
             if (maxPot >= 1) {
-                int sur = 0, odds = 0, highSum = 0;
-                for (int i = n; i < N; ++i) {
+                int sur = 0, highSum = 0;
+                for (int i = n - 1; i < N; ++i) {
                     if (i < N - 1) {
                         sur += seq[i] - d;
                     }
-                    if (seq[i] % 2 == 1) {
-                        ++odds;
-                    }
                     highSum += seq[i];
                 }
-                if (d % 2 == 1) {
-                    odds += n;
-                }
-                if (sur >= surBound && odds % 2 == 0 && n * d >= highSum) {
+                if (sur >= surBound && (highSum + d * (n - 1)) % 2 == 0 
+                                        && (n - 1) * d >= highSum) {
                     result.push_back(seq);
                 }
                 ++seq[N - 1];
             }
             else {
                 for (int i = N - 2; i >= 0; --i) {
-                    if (seq[i] < D1) {
+                    if (seq[i] < dN) {
                         seq[i]++;
                         for (int j = i + 1; j < N; ++j) {
                             seq[j] = seq[i];

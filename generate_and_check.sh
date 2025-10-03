@@ -136,10 +136,10 @@ run_SI_job() {
 
 echo "=== Running SI-Lemma 3"
 
-run_SI_job "genbg -d2:3 -D7:3 6 7" "S" "5" "SI-Lemma_3" &
+run_SI_job "genbg -d2:3 -D7:3 6 7" "S" "6" "SI-Lemma_3" &
 run_SI_job "genbg -d2:3 -D6:3 5 6" "S" "5" "SI-Lemma_3" &
-run_SI_job "genbg -d2:3 -D5:3 4 5" "S" "5" "SI-Lemma_3" &
-run_SI_job "genbg -d2:3 -D4:3 3 4" "S" "5" "SI-Lemma_3" &
+run_SI_job "genbg -d2:3 -D5:3 4 5" "S" "4" "SI-Lemma_3" &
+run_SI_job "genbg -d2:3 -D4:3 3 4" "S" "3" "SI-Lemma_3" &
 
 
 # echo "=== Running SI-Lemma 4"
@@ -190,46 +190,12 @@ echo "=== Generating degree sequences"
 
 g++ pccgs.cpp graph.cpp check_cores.cpp -o check_cores
 
-cores_cmd_arr=(
-"genbg -d8:0 -D8:3 3 16 24:24"
-# "genbg -d7:0 -D8:3 3 17 23:23"
-# "genbg -d7:0 -D9:3 3 17 25:25"
-# "genbg -d9:0 -D9:3 3 17 27:27"
-# "genbg -d6:0 -D6:3 4 16 24:24"
-# "genbg -d4:0 -D8:3 4 16 26:26"
-# "genbg -d4:0 -D8:3 4 16 28:28"
-# "genbg -d6:0 -D8:3 4 16 30:30"
-# "genbg -d8:0 -D8:3 4 16 32:32"
-# "genbg -d4:0 -D6:3 5 15 27:27"
-# "genbg -d4:0 -D7:3 5 15 29:29"
-# "genbg -d6:0 -D9:3 3 18 24:24"
-# "genbg -d6:0 -D10:3 3 18 26:26"
-# "genbg -d8:0 -D10:3 3 18 28:28"
-# "genbg -d10:0 -D10:3 3 18 30:30"
-# "genbg -d4:0 -D7:3 4 17 25:25"
-# "genbg -d4:0 -D9:3 4 17 27:27"
-# "genbg -d4:0 -D9:3 4 17 29:29"
-# "genbg -d4:0 -D9:3 4 17 31:31"
-# "genbg -d6:0 -D9:3 4 17 33:33"
-# "genbg -d8:0 -D9:3 4 17 35:35"
-# "genbg -d4:0 -D7:3 5 16 28:28"
-# "genbg -d4:0 -D8:3 5 16 30:30"
-# "genbg -d4:0 -D8:3 5 16 32:32"
-# "genbg -d4:0 -D8:3 5 16 34:34"
-# "genbg -d4:0 -D8:3 5 16 36:36"
-# "genbg -d6:0 -D8:3 5 16 38:38"
-# "genbg -d8:0 -D8:3 5 16 40:40"
-# "genbg -d4:0 -D5:3 6 15 29:29"
-# "genbg -d4:0 -D7:3 6 15 31:31"
-# "genbg -d4:0 -D7:3 6 15 33:33"
-# "genbg -d4:0 -D7:3 6 15 35:35"
-# "genbg -d4:0 -D7:3 6 15 37:37"
-# "genbg -d4:0 -D5:3 7 14 32:32"
-# "genbg -d4:0 -D7:3 7 14 34:34"
-# "genbg -d4:0 -D7:3 7 14 36:36"
-# "genbg -d4:0 -D5:3 8 13 35:35" 
-# "genbg -d4:0 -D6:3 8 13 37:37"
-)
+# Array containing the nauty commands generating all cores
+cores_cmd_arr=()
+while read line; do
+    cores_cmd_arr+=("$line")
+done < cores_cmds.txt
+
 
 n=150
 
@@ -237,13 +203,14 @@ n=150
 # the nauty command "cmd i/n". The results are temporarily stored in 
 # tmp_dir/cmd_name and later collected in ...
 run_cores_job() {
-    cmd=$1; i=$2
+    local cmd=$1; local ind=$2
     cmd_name=$(echo "$cmd" | tr ' /' '__')
     mkdir -p "$tmp_dir/$cmd_name"
-    tmpfile="$tmp_dir/$cmd_name/${cmd_name}_$i_$n.txt"
+    tmpfile="$tmp_dir/$cmd_name/$(printf "%03d" "$2")_$n.txt"
+    echo "$tmpfile"
 
     {
-        eval "$cmd $i/$n" | ./check_cores
+        eval "$cmd $2/$n" | ./check_cores
     } &> "$tmpfile"
 }
 
@@ -269,13 +236,17 @@ done
 # Collecting tmp files in log ##################################################
 
 for dir in "$tmp_dir"/*/; do
-    [ -d "$dir" ] || continue
+    if [ ! -d "$dir" ]; then
+        continue
+    fi
     log_name=$(basename "${dir%/}")
     log_file="$log_dir/$log_name.log"
     echo "=== Log file for $log_name" >> "$log_file"
     echo -e "\n\n" >> "$log_file"
     for tmp_file in "$dir"*; do
-        [ -f "$tmp_file" ] || continue
+        if [ ! -f "$tmp_file" ]; then
+            continue
+        fi
         cat "$tmp_file" >> "$log_file"
     done
 
