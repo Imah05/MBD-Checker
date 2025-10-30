@@ -6,4 +6,5 @@ sequence_generator
 
 .vscode/
 
-tmp/*
+tmps/*
+logs/*

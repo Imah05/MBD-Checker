@@ -77,7 +77,7 @@ vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
 
 // calls `generateSeqs` with `NStart = 16`, `NEnd = 21`, `d = 3` 
 // and `surBound = 9` and writes the resulting degree sequences to 
-// the file `input_sequences.txt`. 
+// the file `deg_seqs.txt`. 
 int main() {
     vector<vector<int>> result = generateSeqs(16, 21, 3, 9);
 

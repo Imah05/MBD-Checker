@@ -37,13 +37,13 @@ This repository contains the code used for the computer-aided computations in [T
     * Output: `completionOutcome(g6, firstPlayer)` returns `'D'`, if Dominator wins on every completion of P when `firstPlayer` starts the game. Otherwise it returns `'S'`. 
   - `filter`
     * Input: a graph6 string `g6` corresponding to a core C
-    * Output: `filter(g6)` returns `true` if and only if the degree sequence of its completions is not among the sequences in `inSeqs` (which are loaded from `input_sequences.txt` via `loadInputSequences`) or Dominator wins on all completions of C going first.  
+    * Output: `filter(g6)` returns `true` if and only if the degree sequence of its completions is not among the sequences in `inSeqs` (which are loaded from `deg_seqs.txt` via `loadInputSequences`) or Dominator wins on all completions of C going first.  
 
 ### `sequence_generator.cpp` (contains a `main`)
   - `generateSeqs` (see Algorithm 4 in the [thesis](link_to_arxiv?)) 
     * Input: integers `NStart`, `NEnd`, `d`, `surBound`
     * Output: a vector containing all degree sequences of reduced graphs on at least `NStart` and at most `NEnd` vertices of minimum degree `d` and surplus at least `surBound` to which Lemma 9 (Two-step Erdős-Selfridge for degree sequences of reduced graphs) does not apply.
-  - `main`: calls `generateSeqs` with `NStart = 16`, `NEnd = 21`, `d = 3` and `surBound = 9` and writes the resulting degree sequences to the file `input_sequences.txt`. 
+  - `main`: calls `generateSeqs` with `NStart = 16`, `NEnd = 21`, `d = 3` and `surBound = 9` and writes the resulting degree sequences to the file `deg_seqs.txt`. 
 
 ### Several `check_*.cpp` (all containing a `main`)
   * `main` in `check_graphs.cpp`: 
