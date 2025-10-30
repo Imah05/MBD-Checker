@@ -305,7 +305,7 @@ g++ pccgs.cpp graph.cpp check_cores.cpp -o check_cores
 cores_cmd_arr=()
 while read line; do
     cores_cmd_arr+=("$line")
-done < cores_cmds_test.txt
+done < cores_cmds.txt
 
 
 n=150
