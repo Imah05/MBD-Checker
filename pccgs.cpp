@@ -14,7 +14,7 @@ using namespace std;
 
 vector<vector<int>> inSeqs; 
 
-void loadInputSequences(const string& filename) {
+void loadDegSeqs(const string& filename) {
     ifstream infile(filename);
     if (!infile) {
         cerr << "Error opening file: " << filename << endl;

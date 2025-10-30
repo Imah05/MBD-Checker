@@ -9,11 +9,11 @@ inline int d = 3;
 
 extern std::vector<std::vector<int>> inSeqs;
 
-// Loads the degree sequences from the input file filename to inputDegSequences. 
+// Loads the degree sequences from the input file filename to inSeqs. 
 // Expects the degree sequences in filename to come in separate lines, where 
 // each line contains an increasingly sorted sequence of non-negative integers 
 // separated by whitespaces.
-void loadInputSequences(const std::string& filename = "input_sequences.txt");
+void loadDegSeqs(const std::string& filename = "deg_seqs.txt");
 
 class Pccgs : public Graph {
 public:

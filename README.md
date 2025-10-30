@@ -16,7 +16,7 @@ This repository contains the code used for the computer-aided computations in [T
 
 * Precomputed logs are provided in `logs_precomputed/` (running all checks takes ~230 CPU-days).
 
-* Requirements: Unix-like operating system (for nauty), `g++`, `bc`, [nauty](https://pallini.di.uniroma1.it/) (`geng`, `genbg` and `labelg` must be on `PATH`).
+* Requirements: Unix-like operating system, `g++`, `bc`, [nauty](https://pallini.di.uniroma1.it/) (`geng`, `genbg` and `labelg` must be on `PATH`).
 
 ## The .cpp files
 
@@ -27,14 +27,14 @@ This repository contains the code used for the computer-aided computations in [T
 ### `game_state.cpp`/`game_state.h`
   - Class for game states (see [thesis](link_to_arxiv?))
   - `outcome` (see Algorithm 1 in the [thesis](link_to_arxiv?)) 
-    * Input: a `char firstPlayer` (either `D` or `S`) and a `GameState gs`
-    * Output: `gs.outcome(firstPlayer)` returns `D` or `S` depending on the outcome of the game state `gs` when `firstPlayer` starts the game.
+    * Input: a `char firstPlayer` (either `'D'` or `'S'`) and a `GameState gs`
+    * Output: `gs.outcome(firstPlayer)` returns `'D'` or `'S'` depending on the outcome of the game state `gs` when `firstPlayer` starts the game.
 
 ### `pccgs.cpp`/`pccgs.h`
   - Class for partially completed core game states (see [thesis](link_to_arxiv?))
   - `completionOutcome` (see Algorithm 4 in the [thesis](link_to_arxiv?))
-    * Input: a graph6 string `g6` corresponding to a pcc P and a `char firstPlayer` (either `D` or `S`)
-    * Output: `completionOutcome(g6, firstPlayer)` returns `D`, if Dominator wins on every completion of P when `firstPlayer` starts the game. Otherwise it returns `S`. 
+    * Input: a graph6 string `g6` corresponding to a pcc P and a `char firstPlayer` (either `'D'` or `'S'`)
+    * Output: `completionOutcome(g6, firstPlayer)` returns `'D'`, if Dominator wins on every completion of P when `firstPlayer` starts the game. Otherwise it returns `'S'`. 
   - `filter`
     * Input: a graph6 string `g6` corresponding to a core C
     * Output: `filter(g6)` returns `true` if and only if the degree sequence of its completions is not among the sequences in `inSeqs` (which are loaded from `input_sequences.txt` via `loadInputSequences`) or Dominator wins on all completions of C going first.  
@@ -47,6 +47,19 @@ This repository contains the code used for the computer-aided computations in [T
 
 ### Several `check_*.cpp` (all containing a `main`)
   * `main` in `check_graphs.cpp`: 
-  * `main` in `check_R.cpp`:
+    - Argument: `firstPlayer`, which is either `'D'` or `'S'`. 
+    - Reads graphs in graph6 format from stdin, and reports to stderr each graph, on which Staller wins when `firstPlayer` starts the game. 
+  * `main` in `check_R.cpp`: 
+    - Arguments: 
+      * `firstPlayer`, which is either `'D'` or `'S'`
+      * `surBound`, an upper bound for the surplus
+    - Reads graphs in graph6 format from stdin. Reports to stderr each graph, which has surplus at most `surBound` and on which Staller wins when `firstPlayer` starts the game.
   * `main` in `check_SI.cpp`:
-  * `main` in `check_cores.cpp`: 
+      - Arguments: 
+        * `firstPlayer`, which is either `'D'` or `'S'`
+        * `surBound`, an upper bound on the number of degree 2 vertices 
+    - Reads graphs in graph6 format from stdin. Reports to stderr each graph, which has at most `surBound` degree 2 vertices and on which Staller wins when `firstPlayer` starts the game. 
+  * `main` in `check_cores.cpp`: Reads cores (of reduced graphs) in graph6 format from stdin. Reports to stderr each core, which has a completion on which Staller wins going second and which has a degree sequence ocurring in `deg_seqs.txt`. 
+
+All four of these mains keep track of the total runtime and the number of graphs/cores they checked, writing both to stderr as well. 
+

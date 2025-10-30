@@ -7,20 +7,29 @@
 
 using namespace std;
 
+// Reads cores in graph6 format from stdin, applies `filter()`, and reports
+// all cores for which `filter()` returns false to stderr. 
+// Tracks total runtime and count and writes both to stderr as well.
 int main() {
-    loadInputSequences();
+    loadDegSeqs();
+
     string graph6;
     clock_t c_start = clock();
     int counter = 0;
+
     while(getline(cin, graph6)) {
         if (!filter(graph6)) {
-            cerr << "Found graph, on which Staller wins: " << graph6 << "\n";
+            cerr << "Found core with completion, on which Staller wins: " 
+                << graph6 << "\n";
         }
         ++counter;
     }
+
     clock_t c_end = clock();
     double time = double(c_end - c_start) / CLOCKS_PER_SEC;
+
     cerr << fixed << setprecision(2);
     cerr << ">F " << counter << " cores checked in " << time << " sec\n";
+
     return 0;
 }

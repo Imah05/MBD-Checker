@@ -6,6 +6,11 @@
 
 using namespace std;
 
+
+// Input:   integers `NStart`, `NEnd`, `d`, `surBound`
+// Output:  a vector containing all degree sequences of reduced graphs on at 
+//          least `NStart` and at most `NEnd` vertices of minimum degree `d` 
+//          and surplus at least `surBound` to which Lemma 9 does not apply.
 vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
     vector<vector<int>> result;
     for (int N = NStart; N <= NEnd; ++N) {
@@ -70,13 +75,15 @@ vector<vector<int>> generateSeqs(int NStart, int NEnd, int d, int surBound) {
     return result;
 }
 
-
+// calls `generateSeqs` with `NStart = 16`, `NEnd = 21`, `d = 3` 
+// and `surBound = 9` and writes the resulting degree sequences to 
+// the file `input_sequences.txt`. 
 int main() {
     vector<vector<int>> result = generateSeqs(16, 21, 3, 9);
 
-    ofstream outFile("input_sequences.txt");
+    ofstream outFile("deg_seqs.txt");
     if (!outFile) {
-        cerr << "Error opening file sequences.txt" << endl;
+        cerr << "Error opening file deg_seqs.txt" << endl;
         return 1;
     }
 
