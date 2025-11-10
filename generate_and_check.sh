@@ -1,10 +1,15 @@
 #!/bin/bash 
 
-# set k, the number of cores among which the checking is distributed
+# Set k, the number of cores among which the checking is distributed
 k=$(nproc)
 if (( k > 1 )); then
     ((k--))
 fi
+
+# Set n, the number of chunks to split nauty command, in case it takes a long
+# time to check the resulting graphs
+n=200
+
 
 # Waits until fewer than m=$1 background jobs are running
 wait_for_jobs() {
@@ -71,10 +76,10 @@ echo "=== Running checks for beta(2)"
 class="beta(2)"
 p="D"
 
-run_graphs_job "geng -d2 8" &
-run_graphs_job "geng -d2 9" &
+run_graphs_job "geng -d2 08" &
+run_graphs_job "geng -d2 09" &
 run_graphs_job "geng -d2 10" &
-run_graphs_job "geng -d2 11" &
+run_graphs_job "geng -d2 11" & 
 
 
 # beta'(3)
@@ -83,11 +88,13 @@ echo "=== Running checks for beta'(3)"
 class="beta'(3)"
 p="S"
 
-run_graphs_job "geng -d3 8" &
-run_graphs_job "geng -d3 9" &
+run_graphs_job "geng -d3 08" &
+run_graphs_job "geng -d3 09" &
 run_graphs_job "geng -d3 10" &
 run_graphs_job "geng -d3 11" &
-run_graphs_job "geng -d3 12" &
+run_graphs_job "geng -d3 -D7 12 0/3" &
+run_graphs_job "geng -d3 -D7 12 1/3" &
+run_graphs_job "geng -d3 -D7 12 2/3" &
 
 
 # Wait until fewer than k background jobs are running
@@ -153,7 +160,7 @@ class="R-Lemma_4"
 sur="5"
 p="D"
 
-run_R_job "geng -d1D3 9 11:11" &
+run_R_job "geng -d1D3 09 11:11" &
 run_R_job "geng -d1D6 10 13:14" &
 run_R_job "geng -d1D8 11 14:17" &
 run_R_job "geng -d1D9 12 16:19" &
@@ -307,8 +314,6 @@ while read line; do
     cores_cmd_arr+=("$line")
 done < cores_cmds.txt
 
-
-n=150
 
 # Runs the nauty command `cmd ind/n` to generate cores and checks whether 
 # Dominator wins on every completion of each generated core.
