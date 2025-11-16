@@ -1,0 +1,34 @@
+=== Log file for beta'(3)
+
+
+
+>A geng -d3D7 n=8 e=12-28
+>Z 2590 graphs generated in 0.01 sec
+>F 2590 graphs checked in 0.06 sec
+>A geng -d3D8 n=9 e=14-36
+>Z 84245 graphs generated in 0.15 sec
+>F 84245 graphs checked in 1.84 sec
+>A geng -d3D9 n=10 e=15-45
+>Z 5203135 graphs generated in 6.14 sec
+>F 5203135 graphs checked in 145.32 sec
+>A geng -d3D10 n=11 e=17-55
+>Z 577076735 graphs generated in 541.47 sec
+>F 577076735 graphs checked in 26294.93 sec
+>A geng -X0x150d3D7 n=12 e=18-42 class=0/3
+>Z 8850698754 graphs generated in 12245.67 sec
+>F 260764162 graphs checked in 420498.73 sec
+>A geng -X0x150d3D7 n=12 e=18-42 class=1/3
+>Z 9086109906 graphs generated in 12404.88 sec
+>F 496175314 graphs checked in 426821.75 sec
+>A geng -X0x150d3D7 n=12 e=18-42 class=2/3
+>Z 8232819074 graphs generated in 11113.35 sec
+>F -357115518 graphs checked in 396921.24 sec
+
+
+
+=== Total number of graphs generated: 26751994439
+=== Total number of graphs checked: 982190663
+=== Total time for generation: 36311.67 seconds
+=== Total time for checking: 1270683.87 seconds
+=== Total number of exceptional graphs: 0
+

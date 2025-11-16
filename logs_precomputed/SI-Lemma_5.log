@@ -1,0 +1,19 @@
+=== Log file for SI-Lemma_5
+
+
+
+>A genbg n=7+8 e=24:24 d=2:3 D=8:3 
+>Z 12080 graphs generated in 0.14 sec
+>F 12080 SI-graphs checked in 0.49 sec
+>A genbg n=8+9 e=27:27 d=2:3 D=9:3 
+>Z 262345 graphs generated in 3.57 sec
+>F 262345 SI-graphs checked in 155.45 sec
+
+
+
+=== Total number of graphs generated: 274425
+=== Total number of graphs checked: 274425
+=== Total time for generation: 3.71 seconds
+=== Total time for checking: 155.94 seconds
+=== Total number of exceptional graphs: 0
+

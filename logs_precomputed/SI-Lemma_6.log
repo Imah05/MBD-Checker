@@ -1,0 +1,16 @@
+=== Log file for SI-Lemma_6
+
+
+
+>A genbg n=9+10 e=30:30 d=2:3 D=4:3 
+>Z 465023 graphs generated in 9.88 sec
+>F 465023 SI-graphs checked in 3477.83 sec
+
+
+
+=== Total number of graphs generated: 465023
+=== Total number of graphs checked: 465023
+=== Total time for generation: 9.88 seconds
+=== Total time for checking: 3477.83 seconds
+=== Total number of exceptional graphs: 0
+

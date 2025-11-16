@@ -1,0 +1,25 @@
+=== Log file for beta(2)
+
+
+
+>A geng -d2D7 n=8 e=8-28
+>Z 7459 graphs generated in 0.01 sec
+>F 7459 graphs checked in 0.14 sec
+>A geng -d2D8 n=9 e=9-36
+>Z 197867 graphs generated in 0.28 sec
+>F 197867 graphs checked in 4.09 sec
+>A geng -d2D9 n=10 e=10-45
+>Z 9808968 graphs generated in 9.90 sec
+>F 9808968 graphs checked in 304.04 sec
+>A geng -d2D10 n=11 e=11-55
+>Z 902893994 graphs generated in 818.73 sec
+>F 902893994 graphs checked in 40151.75 sec
+
+
+
+=== Total number of graphs generated: 912908288
+=== Total number of graphs checked: 912908288
+=== Total time for generation: 828.92 seconds
+=== Total time for checking: 40460.02 seconds
+=== Total number of exceptional graphs: 0
+
