@@ -14,7 +14,7 @@ This repository contains the code used for the computer-aided computations in th
 
 * Output: information on whether the checks were successful, how long they took, and how many graphs were checked. After the computations finish, the output is written to log files, which are stored in `logs/`.
 
-* Precomputed logs are provided in `logs_precomputed/` (running all checks takes ~230 CPU-days).
+* Precomputed logs are provided in `logs_precomputed/` (running all checks takes ~200 CPU-days).
 
 * Requirements: Unix-like operating system, `g++`, `bc`, [nauty](https://pallini.di.uniroma1.it/) (`geng`, `genbg` and `labelg` must be on `PATH`).
 
