@@ -1,0 +1,19 @@
+=== Log file for R-Lemma_6
+
+
+
+>A geng -d2D8 n=13 e=17-19
+>Z 11117922 graphs generated in 20.04 sec
+>F 11117922 R-graphs checked in 381.39 sec
+>A geng -d2D9 n=14 e=19-22
+>Z 1262983066 graphs generated in 1643.76 sec
+>F 1262983066 R-graphs checked in 53009.68 sec
+
+
+
+=== Total number of graphs generated: 1274100988
+=== Total number of graphs checked: 1274100988
+=== Total time for generation: 1663.80 seconds
+=== Total time for checking: 53391.07 seconds
+=== Total number of exceptional graphs: 0
+

@@ -1,0 +1,22 @@
+=== Log file for beta'(2)
+
+
+
+>A geng -d2D3 n=4 e=4-6
+>Z 3 graphs generated in 0.00 sec
+>F 3 graphs checked in 0.00 sec
+>A geng -d2D4 n=5 e=5-10
+>Z 11 graphs generated in 0.00 sec
+>F 11 graphs checked in 0.00 sec
+>A geng -d2D5 n=6 e=6-15
+>Z 62 graphs generated in 0.00 sec
+>F 62 graphs checked in 0.00 sec
+
+
+
+=== Total number of graphs generated: 76
+=== Total number of graphs checked: 76
+=== Total time for generation: 0.00 seconds
+=== Total time for checking: 0.00 seconds
+=== Total number of exceptional graphs: 0
+
