@@ -6,8 +6,8 @@ if (( k > 1 )); then
     ((k--))
 fi
 
-# Set n, the number of chunks to split nauty command, in case it takes a long
-# time to check the resulting graphs
+# Set n, the number of chunks to split the nauty command, in case it takes a
+# long time to check the resulting graphs
 n=200
 
 

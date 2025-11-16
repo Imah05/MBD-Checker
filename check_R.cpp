@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 
     string graph6;
     clock_t c_start = clock();
-    int counter = 0, exceptionalCounter = 0;
+    long counter = 0, exceptionalCounter = 0;
 
     while(getline(cin, graph6)) {
         if (!checkR(graph6, firstPlayer, surBound)) {

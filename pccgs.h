@@ -17,7 +17,7 @@ void loadDegSeqs(const std::string& filename = "deg_seqs.txt");
 
 class Pccgs : public Graph {
 public:
-    // Creates a game state on a pcc represented by a graph6 string, in which 
+    // Creates a game state on a PCC represented by a graph6 string, in which 
     // all the vertices are unclaimed. 
     Pccgs(const std::string& graph6);
 
@@ -34,13 +34,13 @@ public:
     void removeEdge(int u, int v);
 
     // If it returns -1 then Dominator wins on every completion of this 
-    // pccgs, where firstPlayer starts the game. If it returns -2 then Staller 
-    // wins on some completion of this pccgs, where firstPlayer starts the game.
+    // PCCGS, where firstPlayer starts the game. If it returns -2 then Staller 
+    // wins on some completion of this PCCGS, where firstPlayer starts the game.
     // If it returns neither -1 nor -2 it returns a low degree vertex (which we
     // want to use first for completion).
     char potentialOutcome(char firstPlayer) const;
 
-    // Returns 'D' if Dominator wins on every completion of this pcc with 
+    // Returns 'D' if Dominator wins on every completion of this PCC with 
     // firstPlayer starting the game. Otherwise it returns 'S'.
     friend char completionOutcome(const std::string& graph6, char firstPlayer);
             
@@ -59,7 +59,7 @@ private:
     // claimed by Dominator or adjacent to a vertex claimed by Dominator, then 
     // gameStateDeg[i] = -1. Otherwise gameStateDeg[i] is the number of 
     // unclaimed vertices in the closed neighborhood of i in any completion of 
-    // this pccgs.
+    // this PCCGS.
     std::vector<int> gameStateDeg;
 
     // A vector containing all the vertices of the underlying graph, that have 
@@ -69,7 +69,7 @@ private:
     // - if -1 < gameStateDeg[i] < gameStateDeg[j] then i preceeds j.
     std::vector<int> lowDegVtx;
 
-    // totalPot is the total ES potential of any completion of this pccgs.
+    // totalPot is the total ES potential of any completion of this PCCGS.
     double totalPot;
 
     // For an unclaimed vertex i, pot[i] measures by how much totalPot drops if 
